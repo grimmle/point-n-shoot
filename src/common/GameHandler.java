@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 public class GameHandler {
 	
-	LinkedList<GameObject> objects = new LinkedList<GameObject>();
+	public LinkedList<GameObject> objects = new LinkedList<GameObject>();
 	
 	private boolean up = false, down = false, right = false, left = false;
 	
@@ -14,7 +14,6 @@ public class GameHandler {
 			GameObject tempObject = objects.get(i);
 			tempObject.tick();
 		}
-		
 	}
 
 	public void render(Graphics g) {

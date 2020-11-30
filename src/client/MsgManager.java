@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import common.*;
+import server.ServerHandler;
 
 public class MsgManager {
     static void send(Msg msg) {
@@ -14,23 +15,21 @@ public class MsgManager {
         // new ObjectOutputStream(os).writeUnshared(msg);
     }
 
-//    static Map<Class<? extends Msg>, List<Handler<? extends Msg>>> handlers;
+//  static Map<Class<? extends Msg>, List<Handler<? extends Msg>>> handlers;
+    
     static Map<String, List<Handler<? extends Msg>>> handlers;
 
     public static void register(Handler<? extends Msg> h) {
     	List<Handler<? extends Msg>> list;
     	
-    	if(handlers != null) {    		
-    		list = handlers.get(h.getMsgType());
-    	} else {
-    		list = new ArrayList<Handler<? extends Msg>>();
+    	if(handlers == null) {    		
     		Map map = new HashMap<>();
     		handlers = map;
     	}
     	
-//        if (list == null) {
-//            // TODO
-//        }
+    	list = handlers.get(h.getMsgType());
+    	if(list == null) list = new ArrayList<Handler<? extends Msg>>();
+    	
         list.add(h);
         
         handlers.put(h.getMsgType(), list);

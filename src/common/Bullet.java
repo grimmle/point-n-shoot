@@ -4,7 +4,8 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public class Bullet extends GameObject {
-	
+
+	private static final long serialVersionUID = 3702825069143883684L;
 	private GameHandler handler;
 	private float buff;
 

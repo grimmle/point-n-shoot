@@ -1,28 +1,25 @@
 package server;
 
-import common.AddConnectionMsg;
-import common.Handler;
-import common.Msg;
-import server.*;
+import common.*;
 
-public class AddConnectionHandler implements Handler {
+public class AddConnectionHandler implements ServerHandler<AddConnectionMsg> {
 
 	@Override
-	public void handle(Msg msg) {
-		AddConnectionMsg m = (AddConnectionMsg)msg;
+	public void handle(AddConnectionMsg msg, Connection c) {
+		msg.id = c.id;
 		
-		System.out.println("Player " + m.id + " joined the Game!");
-		Server.connections.forEach((i, c) -> {
-			c.sendObject(new AddConnectionMsg());
+		System.out.println("Player " + c.id + " joined the Game!");
+		Server.connections.forEach((i, connection) -> {
+			//if(connection.id != c.id) 
+			connection.sendObject(msg);
 		});
 		
 	}
 
 	@Override
 	public String getMsgType() {
-//		Class c = this.getClass();
-//		String s = c.getSimpleName();
 		return "AddConnectionMsg";
 	}
+
 
 }

@@ -1,4 +1,6 @@
-package common;
+package client;
+
+import common.Msg;
 
 public interface Handler<M extends Msg> {
 	

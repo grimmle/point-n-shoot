@@ -1,9 +1,11 @@
-package common;
+package client;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
+
+import common.*;
 
 public class Game extends Canvas implements Runnable {
 
@@ -18,7 +20,7 @@ public class Game extends Canvas implements Runnable {
 	private Camera camera;
 	
 	public Game() {
-		new Window(WIDTH, HEIGHT, "First Game", this);
+		new Window(WIDTH, HEIGHT, "Game - Client " + Client.id, this);
 		start();
 		
 		handler = new GameHandler();
@@ -27,12 +29,15 @@ public class Game extends Canvas implements Runnable {
 		this.addMouseListener(new MouseInput(handler, camera));
 		
 		handler.addObject(new Player(100,100, handler));
-		handler.addObject(new Block(100, 250));
-		handler.addObject(new Block(320, 760));
-		handler.addObject(new Block(580, 20));
-		handler.addObject(new Pickup(150, 250));
-		handler.addObject(new Pickup(550, 250));
-		handler.addObject(new Pickup(275, 300));
+		Client.staticMap.forEach((object) -> {
+			handler.addObject(object);
+		});
+//		handler.addObject(new Block(100, 250));
+//		handler.addObject(new Block(320, 760));
+//		handler.addObject(new Block(580, 20));
+//		handler.addObject(new Pickup(150, 250));
+//		handler.addObject(new Pickup(550, 250));
+//		handler.addObject(new Pickup(275, 300));
 	}
 	
 

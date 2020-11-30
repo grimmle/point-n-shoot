@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 
 import common.*;
 
@@ -19,8 +20,12 @@ public class Client implements Runnable {
 	private ObjectInputStream in;
 
 	private boolean running = false;
-//	private EventListener listener;
 	private MsgManager manager;
+	
+	static int id = -1;
+	
+	static ArrayList<GameObject> staticMap = new ArrayList<GameObject>();
+	static ArrayList<Player> players = new ArrayList<Player>();
 
 	public Client(String host, int port) {
 		this.host = host;
@@ -33,11 +38,13 @@ public class Client implements Runnable {
 			out = new ObjectOutputStream(socket.getOutputStream());
 			in = new ObjectInputStream(socket.getInputStream());
 			manager = new MsgManager();
+			
 			//register handlers
 			AddConnectionHandler add = new AddConnectionHandler();
+			GetStaticMapHandler map = new GetStaticMapHandler(); 
 			MsgManager.register(add);
+			MsgManager.register(map);
 			
-//			listener = new EventListener();
 			new Thread(this).start();
 		} catch (ConnectException e) {
 			System.out.println("> Unable to connect to the server");
@@ -69,6 +76,10 @@ public class Client implements Runnable {
 
 	@Override
 	public void run() {
+		
+		//init game
+		init();
+		
 		try {
 			running = true;
 			new Game();
@@ -88,10 +99,44 @@ public class Client implements Runnable {
 		}
 	}
 	
+	private void init() {
+		System.out.println("> Get ID");
+		sendObject(new AddConnectionMsg());
+		sendObject(new GetStaticMapMsg());
+		try {
+			running = true;
+			while (running) {
+				try {
+					Msg data = (Msg) in.readObject();
+					
+					System.out.println("new msg : " + data.getClass().getSimpleName());
+					if(data.getClass().getSimpleName().equals("GetStaticMapMsg")) running = false;
+					manager.received(data);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (SocketException e) {
+					close();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("OBjECTs IN MAP: " + staticMap.size());
+		
+		
+		// [x] get client id form server
+		// [ ] get map details (obstacles)
+		// [ ] create player
+		// [ ] bullets = new ArrayList<Bullet>();
+		// [ ] camera = new Camera(0, 0);
+		// [ ] movingObjects = new ArrayList<Box>();
+		
+	}
+
 	public static void main(String[] args) {
 		Client c = new Client("localhost", 3000);
 		c.connect();
-		c.sendObject(new AddConnectionMsg());
+		//c.sendObject(new AddConnectionMsg());
 	}
 
 }

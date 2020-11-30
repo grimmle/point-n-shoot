@@ -41,7 +41,7 @@ public class Connection implements Runnable {
 					Msg data = (Msg) in.readObject();
 					System.out.println("# received " + data);
 					// listener.received(data, this);
-					manager.received(data);
+					manager.received(data, this);
 				} catch (EOFException e) {
 					System.out.println("# client quit: closing connection");
 					close();

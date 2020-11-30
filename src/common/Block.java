@@ -5,6 +5,8 @@ import java.awt.Rectangle;
 
 public class Block extends GameObject {
 
+	private static final long serialVersionUID = -1660008728728386605L;
+
 	public Block(int x, int y) {
 		super(x, y, ID.Block);
 	}

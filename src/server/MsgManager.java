@@ -15,18 +15,18 @@ public class MsgManager {
     }
 
 //    static Map<Class<? extends Msg>, List<Handler<? extends Msg>>> handlers;
-    static Map<String, List<Handler<? extends Msg>>> handlers;
+    static Map<String, List<ServerHandler<? extends Msg>>> handlers;
 
-    public static void register(Handler<? extends Msg> h) {
-    	List<Handler<? extends Msg>> list;
+    public static void register(ServerHandler<? extends Msg> h) {
+    	List<ServerHandler<? extends Msg>> list;
     	
-    	if(handlers != null) {    		
-    		list = handlers.get(h.getMsgType());
-    	} else {
-    		list = new ArrayList<Handler<? extends Msg>>();
+    	if(handlers == null) {    		
     		Map map = new HashMap<>();
     		handlers = map;
     	}
+    	
+    	list = handlers.get(h.getMsgType());
+    	if(list == null) list = new ArrayList<ServerHandler<? extends Msg>>();
     	
         list.add(h);
         
@@ -34,7 +34,7 @@ public class MsgManager {
     }
 
     // received new message
-    public void received(Msg m) {
+    public void received(Msg m, Connection c) {
     	System.out.println(m.getClass().getSimpleName());
     	System.out.println(handlers);
     	
@@ -48,8 +48,8 @@ public class MsgManager {
 //    		});
 //    	}
     	
-        for (Handler h : handlers.get(m.getClass().getSimpleName())) {
-            h.handle(m);
+        for (ServerHandler h : handlers.get(m.getClass().getSimpleName())) {
+            h.handle(m, c);
         }
     }
 }

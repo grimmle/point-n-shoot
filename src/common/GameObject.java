@@ -1,8 +1,11 @@
 package common;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.io.Serializable;
 
-public abstract class GameObject {
+public abstract class GameObject implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	protected int x, y;
 	protected float velX = 0, velY = 0;
