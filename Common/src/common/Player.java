@@ -119,6 +119,10 @@ public class Player extends GameObject {
 		this.left = left;
 	}
 	
+	public void addBuff(float buff) {
+		this.buffed += buff;
+	}
+	
 	public float getBuff() {
 		return buffed;
 	}

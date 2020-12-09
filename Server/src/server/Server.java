@@ -11,6 +11,7 @@ import common.GameObject;
 import common.Pickup;
 import common.Player;
 import handler.AddConnectionHandler;
+import handler.DynamicObjectsUpdateHandler;
 import handler.GetStaticMapHandler;
 import handler.MovePlayerMsgHandler;
 
@@ -35,10 +36,12 @@ public class Server implements Runnable {
 		AddConnectionHandler add = new AddConnectionHandler();
 		GetStaticMapHandler map = new GetStaticMapHandler();
 		MovePlayerMsgHandler move = new MovePlayerMsgHandler();
+		DynamicObjectsUpdateHandler dyn = new DynamicObjectsUpdateHandler();
 		
 		MsgManager.register(add);
 		MsgManager.register(map);
 		MsgManager.register(move);
+		MsgManager.register(dyn);
 		
 		try {
 			serverSocket = new ServerSocket(port);
@@ -55,9 +58,6 @@ public class Server implements Runnable {
 	public synchronized void run() {
 		running = true;
 		System.out.println("# Server started on port: " + port);
-		
-		//setup game
-		initGame();
 
 		while (running) {
 			try {
@@ -69,15 +69,6 @@ public class Server implements Runnable {
 			}
 		}
 		shutdown();
-	}
-
-	private void initGame() {
-		ServerGame.staticMap.add(new Block(100, 250));
-		ServerGame.staticMap.add(new Block(320, 760));
-		ServerGame.staticMap.add(new Block(580, 20));
-		ServerGame.staticMap.add(new Pickup(150, 250));
-		ServerGame.staticMap.add(new Pickup(550, 250));
-		ServerGame.staticMap.add(new Pickup(275, 300));
 	}
 
 	private void initSocket(Socket socket) {

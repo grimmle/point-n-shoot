@@ -41,10 +41,12 @@ public class Client implements Runnable {
 			AddConnectionHandler add = new AddConnectionHandler();
 			GetStaticMapHandler map = new GetStaticMapHandler();
 			MovePlayerMsgHandler move = new MovePlayerMsgHandler();
+			DynamicObjectsUpdateHandler dyn = new DynamicObjectsUpdateHandler();
 			
 			MsgManager.register(add);
 			MsgManager.register(map);
 			MsgManager.register(move);
+			MsgManager.register(dyn);
 			
 			new Thread(this).start();
 		} catch (ConnectException e) {
@@ -69,7 +71,7 @@ public class Client implements Runnable {
 
 	public static void sendObject(Msg msg) {
 		try {
-			System.out.println("client sent " + msg);
+//			System.out.println("client sent " + msg);
 			out.writeObject(msg);
 		} catch (IOException e) {
 			e.printStackTrace();

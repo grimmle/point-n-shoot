@@ -9,7 +9,6 @@ public class KeyInput extends KeyAdapter {
 	
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
-		
 		if(key == KeyEvent.VK_W) Game.player.setUp(true);
 		if(key == KeyEvent.VK_A) Game.player.setLeft(true);
 		if(key == KeyEvent.VK_S) Game.player.setDown(true);

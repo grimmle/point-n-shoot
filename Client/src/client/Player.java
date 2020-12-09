@@ -13,6 +13,7 @@ public class Player extends GameObject {
 	public int id;
 	private float buffed = 1.0f;
 	private int health = 100;
+	private Color color = Color.white;
 	
 	private boolean up = false, down = false, right = false, left = false;
 	
@@ -47,13 +48,12 @@ public class Player extends GameObject {
 		else if(!right) velX = 0;
 		
 		if(tempX != velX || tempY != velY) {
-			System.out.println("vel changed " + velX + " " + velY);
+//			System.out.println("vel changed " + velX + " " + velY);
 			MovePlayerMsg move = new MovePlayerMsg();
 			move.velX = velX;
 			move.velY = velY;
 			Client.sendObject(move);
 		}
-		
 		
 //		if(handler.isUp()) velY = -5;
 //		else if(!handler.isDown()) velY = 0;
@@ -91,9 +91,11 @@ public class Player extends GameObject {
 	
 	@Override
 	public void render(Graphics g) {
-//		g.setColor(Color.green);
-//		g.fillRect(x,  y,  30,  30);
-		g.setColor(Color.white);
+		if(health < 0) {
+			System.out.println("Player " + Client.id + " ded");
+			color = Color.black;
+		}
+		g.setColor(color);
 		g.fillOval(x, y, 30, 30);
 		//g.fillPolygon(new int[] {x, x+15, x+30}, new int[] {y+30, y, y+30}, 3);
 	}
@@ -135,8 +137,16 @@ public class Player extends GameObject {
 		this.left = left;
 	}
 	
+	public void addBuff(float buff) {
+		this.buffed += buff;
+	}
+	
 	public float getBuff() {
 		return buffed;
+	}
+	
+	public void setBuff(float buff) {
+		this.buffed = buff;
 	}
 
 	public int getHealth() {

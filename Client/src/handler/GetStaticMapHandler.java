@@ -1,17 +1,18 @@
 package handler;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import client.*;
-import common.*;
+import client.Game;
+import common.GameObject;
+import common.GetStaticMapMsg;
 
 public class GetStaticMapHandler implements Handler<GetStaticMapMsg> {
 
 	@Override
 	public void handle(GetStaticMapMsg msg) {
-		//System.out.println("dis da map " + msg.content);
-		Game.staticMap = (ArrayList<GameObject>) msg.content;
-		
+		Game.staticMap = (ArrayList<GameObject>) msg.staticMap;
+		Game.dynamicObjects = (CopyOnWriteArrayList<GameObject>) msg.dynamic;	
 	}
 
 	@Override

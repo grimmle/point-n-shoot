@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import common.*;
 
@@ -17,24 +18,23 @@ public class Game extends Canvas implements Runnable {
 	
 	private volatile boolean isRunning = false;
 	private Thread thread;
-	private GameHandler handler;
 	private Camera camera;
 	static Player player;
 	
 	public static ArrayList<GameObject> staticMap = new ArrayList<GameObject>();
-	public static ArrayList<GameObject> movingObjects = new ArrayList<GameObject>();
+	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
 	public static ArrayList<Player> players = new ArrayList<Player>();
+
 	
 	public Game(Player player) {
 		new Window(WIDTH, HEIGHT, "Game - Client " + Client.id, this);
 		start();
 		
-		handler = new GameHandler();
 		camera = new Camera(0, 0);
 		Game.player = player;
 		
 		this.addKeyListener(new KeyInput());
-		this.addMouseListener(new MouseInput(handler, camera));
+		this.addMouseListener(new MouseInput(camera));
 	}
 	
 
@@ -83,18 +83,13 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public void tick() {
-//		System.out.println("CLIENT PLAYAZ: " + players.size());
-		//check if player moved
 		player.tick();
 		camera.tick(players.get(Client.id));
-//		MovePlayerMsg move = new MovePlayerMsg();
-//		move.velX = player.getVelX();
-//		move.velY = player.getVelY();
-//		Client.sendObject(move);
-		//handler.tick();
 	}
 	
 	public void render() {
+//		System.out.println(players.get(Client.id).getHealth());
+		
 		BufferStrategy bs = this.getBufferStrategy();
 		if(bs == null) {
 			this.createBufferStrategy(3);
@@ -115,14 +110,14 @@ public class Game extends Canvas implements Runnable {
 		
 		
 //		handler.render(g);
-		for(GameObject player : players) {
-			player.render(g);
-		}
 		for(GameObject obj : staticMap) {
 			obj.render(g);
 		}
-		for(GameObject obj : movingObjects) {
+		for(GameObject obj : dynamicObjects) {
 			obj.render(g);
+		}
+		for(GameObject player : players) {
+			player.render(g);
 		}
 		
 		g2d.translate(camera.getX(), camera.getY());

@@ -62,7 +62,6 @@ public class Connection implements Runnable {
 		while(running) {
 			try {
 				Msg m = messages.take();
-				System.out.println(m);
 				out.writeUnshared(m);
 				out.reset();
 			} catch (InterruptedException | IOException e) {
