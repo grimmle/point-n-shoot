@@ -24,12 +24,6 @@ public class Game extends Canvas implements Runnable {
 	public static ArrayList<GameObject> staticMap = new ArrayList<GameObject>();
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
 	public static ArrayList<Player> players = new ArrayList<Player>();
-	
-	public OpenSimplex2F OS;
-	private int scale = 40;
-	int cols = 25;
-	int rows = 25;
-	private double[][] map;
 
 	private World world;
 	
@@ -105,7 +99,6 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public void render() {
-//		System.out.println(OS.noise2(players.get(Client.id).getX(), players.get(Client.id).getX()));
 		
 		BufferStrategy bs = this.getBufferStrategy();
 		if(bs == null) {
@@ -127,17 +120,7 @@ public class Game extends Canvas implements Runnable {
 		
 		
 		world.render(g);
-//		for(int y = 0; y < rows; y++) {
-//			for(int x = 0; x < cols; x++) {
-//				if(map[x][y] == 255) {
-//					//draw box
-//					g.setColor(Color.black);
-//					g.fillRect(x*scale, y*scale, scale, scale);
-//				}
-//			}
-//		}
-		
-//		handler.render(g);
+
 		for(GameObject obj : staticMap) {
 			obj.render(g);
 		}

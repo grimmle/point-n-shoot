@@ -8,7 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import common.OpenSimplex2F;
 
 public class World {
-    public static final int SIZE = 500;
+    public static final int TILE_SIZE = 500;
+    public static final int BLOCK_SIZE = 50;
+    public static final int BLOCKS_AMOUNT= TILE_SIZE/BLOCK_SIZE;
     
     private static OpenSimplex2F OS;
     
@@ -18,15 +20,13 @@ public class World {
 
     //besere Datenstruktur wählen? HashMap z.B.?
     WorldTile[] cachedTiles = new WorldTile[30];
-//    static WorldTile[][] cache = new WorldTile[5][5];
     static ConcurrentHashMap<CoordinatesKey, WorldTile> cache = new ConcurrentHashMap<CoordinatesKey, WorldTile>();
-    LinkedHashMap<Integer, String> kek = new LinkedHashMap<>();
     
     double getZ(int x, int y) {
-        int tileX = x / SIZE;
-        int tileY = y / SIZE;
-        int xInsideTile = x % SIZE;
-        int yInsideTile = y % SIZE;
+        int tileX = x / TILE_SIZE;
+        int tileY = y / TILE_SIZE;
+        int xInsideTile = x % TILE_SIZE;
+        int yInsideTile = y % TILE_SIZE;
 
         for (int i = 0; i < cachedTiles.length; ++i) {
             if (cachedTiles[i].x == tileX && cachedTiles[i].y == tileY) {
@@ -41,37 +41,25 @@ public class World {
     
     // Aufrufen z.B. bei Bewegungsnachrichten
     public static void checkIfTilesInCache(int playerX, int playerY) {
-        int tileX = playerX / SIZE;
-        int tileY = playerY / SIZE;
+        int tileX = playerX / TILE_SIZE;
+        int tileY = playerY / TILE_SIZE;
         System.out.println("tileX: " + tileX + " tileY: " + tileY);
         
         // suche, ob Kachel mit Koordinaten kachelX-1, kachelY im Cache enthalten ist
         // falls nicht -> generieren
         // analog für rechts, oben, unten bzw. 3x3 Feld
-        	
-//        if(cache[tileX-1][tileY-1] == null) generateTile(tileX-1, tileY-1);
-//        if(cache[tileX][tileY-1] == null) generateTile(tileX, tileY-1);
-//        if(cache[tileX+1][tileY-1] == null) generateTile(tileX+1, tileY-1);
-//        
-//        if(cache[tileX-1][tileY] == null) generateTile(tileX-1, tileY);
-//        if(cache[tileX][tileY] == null) generateTile(tileX, tileY);
-//        if(cache[tileX+1][tileY] == null) generateTile(tileX+1, tileY);
-//        
-//        if(cache[tileX-1][tileY+1] == null) generateTile(tileX-1, tileY+1);
-//        if(cache[tileX][tileY+1] == null) generateTile(tileX, tileY+1);
-//        if(cache[tileX+1][tileY+1] == null) generateTile(tileX+1, tileY+1);
         
-//        if(cache.get(new CoordinatesKey(tileX-1, tileY-1)) == null) generateTile(tileX-1, tileY-1);
-//        if(cache.get(new CoordinatesKey(tileX, tileY-1)) == null) generateTile(tileX, tileY-1);
-//        if(cache.get(new CoordinatesKey(tileX+1, tileY-1)) == null) generateTile(tileX+1, tileY-1);
-//        
-//        if(cache.get(new CoordinatesKey(tileX-1, tileY)) == null) generateTile(tileX-1, tileY);
+        if(cache.get(new CoordinatesKey(tileX-1, tileY-1)) == null) generateTile(tileX-1, tileY-1);
+        if(cache.get(new CoordinatesKey(tileX, tileY-1)) == null) generateTile(tileX, tileY-1);
+        if(cache.get(new CoordinatesKey(tileX+1, tileY-1)) == null) generateTile(tileX+1, tileY-1);
+        
+        if(cache.get(new CoordinatesKey(tileX-1, tileY)) == null) generateTile(tileX-1, tileY);
         if(cache.get(new CoordinatesKey(tileX, tileY)) == null) generateTile(tileX, tileY); // players current tile
-//        if(cache.get(new CoordinatesKey(tileX+1, tileY)) == null) generateTile(tileX+1, tileY);
-//        
-//        if(cache.get(new CoordinatesKey(tileX-1, tileY+1)) == null) generateTile(tileX-1, tileY+1);
-//        if(cache.get(new CoordinatesKey(tileX, tileY+1)) == null) generateTile(tileX, tileY+1);
-//        if(cache.get(new CoordinatesKey(tileX+1, tileY+1)) == null) generateTile(tileX+1, tileY+1);
+        if(cache.get(new CoordinatesKey(tileX+1, tileY)) == null) generateTile(tileX+1, tileY);
+        
+        if(cache.get(new CoordinatesKey(tileX-1, tileY+1)) == null) generateTile(tileX-1, tileY+1);
+        if(cache.get(new CoordinatesKey(tileX, tileY+1)) == null) generateTile(tileX, tileY+1);
+        if(cache.get(new CoordinatesKey(tileX+1, tileY+1)) == null) generateTile(tileX+1, tileY+1);
     }
 
     
@@ -80,12 +68,13 @@ public class World {
     	System.out.println("generating tile: " + tileX + ", " + tileY);
     	
     	WorldTile tile = new WorldTile(tileX, tileY);
-    	tile.z = new double[SIZE/20][SIZE/50];
+    	
+    	tile.z = new double[BLOCKS_AMOUNT][BLOCKS_AMOUNT];
     	
     	float yoff = tileY + 0.0f;
-		for(int y = 0; y < SIZE/50; y++) {
+		for(int y = 0; y < BLOCKS_AMOUNT; y++) {
 			float xoff = tileX + 0.0f;
-			for(int x = 0; x < SIZE/20; x++) {
+			for(int x = 0; x < BLOCKS_AMOUNT; x++) {
 				double out = map(OS.noise2(xoff, yoff), -1, 1, 0, 255);
 //				System.out.println("VALUE @ x:" + x + ", y: " + y + " -> " + out);
 				tile.z[x][y] = out > 190 ? 255 : 0;
