@@ -80,8 +80,6 @@ public class Client implements Runnable {
 
 	@Override
 	public void run() {
-		
-		System.out.println("> Get ID");
 		sendObject(new AddConnectionMsg());
 		sendObject(new GetStaticMapMsg());
 		try {
@@ -102,19 +100,10 @@ public class Client implements Runnable {
 			e.printStackTrace();
 		}
 	}
-		
-		
-	// [x] get client id form server
-	// [x] get map details (obstacles)
-	// [ ] create player
-	// [ ] bullets = new ArrayList<Bullet>();
-	// [ ] camera = new Camera(0, 0);
-	// [ ] movingObjects = new ArrayList<Box>();
 
 	public static void main(String[] args) {
 		Client c = new Client("localhost", 3000);
 		c.connect();
-		//c.sendObject(new AddConnectionMsg());
 	}
 
 }

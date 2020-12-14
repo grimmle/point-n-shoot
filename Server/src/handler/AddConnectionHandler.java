@@ -8,7 +8,7 @@ public class AddConnectionHandler implements ServerHandler<AddConnectionMsg> {
 	@Override
 	public void handle(AddConnectionMsg msg, Connection c) {
 		
-		Player p = new Player(100*c.id, 10, c.id);
+		Player p = new Player(100000, 100000, c.id);
 		ServerGame.players.add(p);
 		
 		System.out.println("Player " + c.id + " joined the Game!");

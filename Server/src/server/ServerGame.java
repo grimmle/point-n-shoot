@@ -8,6 +8,7 @@ import common.DynamicObjectsUpdateMsg;
 import common.GameObject;
 import common.ID;
 import common.MovePlayerMsg;
+import common.OpenSimplex2F;
 import common.Pickup;
 import common.Player;
 
@@ -48,6 +49,9 @@ public class ServerGame implements Runnable {
 		dynamicObjects.add(new Pickup(275, 300));
 		dynamicObjects.add(new Pickup(295, 300));
 		dynamicObjects.add(new Pickup(550, 500));
+//		long seed = 0;
+//		OpenSimplex2F OS = new OpenSimplex2F(seed);
+//		OS.noise2(0, 0);
 	}
 
 

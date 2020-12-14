@@ -91,8 +91,7 @@ public class Player extends GameObject {
 	
 	@Override
 	public void render(Graphics g) {
-		if(health < 0) {
-			System.out.println("Player " + Client.id + " ded");
+		if(health < 50) {
 			color = Color.black;
 		}
 		g.setColor(color);

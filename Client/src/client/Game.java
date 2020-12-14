@@ -24,18 +24,35 @@ public class Game extends Canvas implements Runnable {
 	public static ArrayList<GameObject> staticMap = new ArrayList<GameObject>();
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
 	public static ArrayList<Player> players = new ArrayList<Player>();
+	
+	public OpenSimplex2F OS;
+	private int scale = 40;
+	int cols = 25;
+	int rows = 25;
+	private double[][] map;
 
+	private World world;
+	
 	
 	public Game(Player player) {
 		new Window(WIDTH, HEIGHT, "Game - Client " + Client.id, this);
-		start();
 		
-		camera = new Camera(0, 0);
 		Game.player = player;
+		camera = new Camera(player.getX(), player.getY());
+		
 		
 		this.addKeyListener(new KeyInput());
 		this.addMouseListener(new MouseInput(camera));
+		
+		// WORLD
+		long seed = 42069;		
+		world = new World(seed);
+		world.checkIfTilesInCache(player.getX(), player.getY());
+
+		
+		start();
 	}
+	
 	
 
 	private void start() {
@@ -88,7 +105,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public void render() {
-//		System.out.println(players.get(Client.id).getHealth());
+//		System.out.println(OS.noise2(players.get(Client.id).getX(), players.get(Client.id).getX()));
 		
 		BufferStrategy bs = this.getBufferStrategy();
 		if(bs == null) {
@@ -109,6 +126,17 @@ public class Game extends Canvas implements Runnable {
 		g2d.translate(-camera.getX(), -camera.getY());
 		
 		
+		world.render(g);
+//		for(int y = 0; y < rows; y++) {
+//			for(int x = 0; x < cols; x++) {
+//				if(map[x][y] == 255) {
+//					//draw box
+//					g.setColor(Color.black);
+//					g.fillRect(x*scale, y*scale, scale, scale);
+//				}
+//			}
+//		}
+		
 //		handler.render(g);
 		for(GameObject obj : staticMap) {
 			obj.render(g);
@@ -125,5 +153,9 @@ public class Game extends Canvas implements Runnable {
 		////
 		g.dispose();
 		bs.show();
+	}
+	
+	public static void main(String[] args) {
+		Game g = new Game(new Player(0, 0, 69));
 	}
 }
