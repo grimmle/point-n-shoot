@@ -8,18 +8,20 @@ public class Bullet extends GameObject {
 
 	private static final long serialVersionUID = 3702825069143883684L;
 	
-	private int size;
 	public int id;
+	private int size;
+	private Color color;
 	public long timestamp;
 
 	/*
 	 * x, y are center of player
 	 * mx, my where the player is clicking
 	 * */
-	public Bullet(int x, int y, int mx, int my, float buff, int id) {
-		super(x, y, ID.Bullet);
-		this.size = (int) (8*buff);
+	public Bullet(int x, int y, int mx, int my, float buff, int id, Color color) {
+		super(x, y, TYPE.Bullet);
 		this.id = id;
+		this.size = (int) (8*buff);
+		this.color = color;
 		this.timestamp = new Date().getTime();
 		
 		int fromX = (int) (x-(buff/2));
@@ -34,23 +36,11 @@ public class Bullet extends GameObject {
 
 	@Override
 	public void tick() {
-//		x += velX;
-//		y += velY;
-//		
-//		for(int i = 0; i < handler.objects.size(); i++) {
-//			GameObject tempObject = handler.objects.get(i);
-//			//delete bullet when it hits a block
-//			if(tempObject.getId() == ID.Block) {
-//				if(getBounds().intersects(tempObject.getBounds())) {
-//					handler.removeObject(this);
-//				}
-//			}
-//		}
 	}
 
 	@Override
 	public void render(Graphics g) {
-		g.setColor(Color.black);
+		g.setColor(color);
 		g.fillOval(x, y, size, size);
 	}
 

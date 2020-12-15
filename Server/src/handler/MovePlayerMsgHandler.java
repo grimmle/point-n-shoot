@@ -1,6 +1,7 @@
 package handler;
 
 import common.*;
+import messages.MovePlayerMsg;
 import server.*;
 
 public class MovePlayerMsgHandler implements ServerHandler<MovePlayerMsg> {
@@ -8,7 +9,7 @@ public class MovePlayerMsgHandler implements ServerHandler<MovePlayerMsg> {
 	@Override
 	public void handle(MovePlayerMsg msg, Connection c) {
 		
-		Player p = ServerGame.players.get(c.id);
+		PlayerModel p = ServerGame.players.get(c.id);
 		//check if that move is possible/legit
 		
 //		p.setX((int) (p.getX() + msg.velX));

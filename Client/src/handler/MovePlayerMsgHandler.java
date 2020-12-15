@@ -2,9 +2,9 @@ package handler;
 
 import client.Client;
 import client.Game;
-import client.World;
-import common.MovePlayerMsg;
-import common.Player;
+import common.World;
+import messages.MovePlayerMsg;
+import common.PlayerModel;
 
 public class MovePlayerMsgHandler implements Handler<MovePlayerMsg> {
 
@@ -13,7 +13,7 @@ public class MovePlayerMsgHandler implements Handler<MovePlayerMsg> {
 		if(Game.players != null && Game.staticMap != null) {
 			if(Game.players.size() == msg.players.size()) {
 				for(int i = 0; i < msg.players.size(); i++) {
-					Player s = msg.players.get(i);
+					PlayerModel s = msg.players.get(i);
 					client.Player p = Game.players.get(i);
 //					System.out.println("Player " + p.id + " moved: " + p.getX() + " " + p.getY());
 
@@ -24,9 +24,12 @@ public class MovePlayerMsgHandler implements Handler<MovePlayerMsg> {
 					p.setY(s.getY());
 					
 					//updated pos
-					if (p.id == Client.id && (p.getX() / World.TILE_SIZE != tileX || p.getY() / World.TILE_SIZE != tileY)) {
-						System.out.println("new tile " + p.getX() / World.TILE_SIZE + " " + p.getY() / World.TILE_SIZE);
-						World.checkIfTilesInCache(p.getX(), p.getY());
+					if (p.id == Client.id) {
+//						Game.player = p;
+						if (p.getX() / World.TILE_SIZE != tileX || p.getY() / World.TILE_SIZE != tileY) {
+	//						System.out.println("new tile " + p.getX() / World.TILE_SIZE + " " + p.getY() / World.TILE_SIZE);
+							World.checkIfTilesInCache(p.getX(), p.getY());
+						}
 					}
 			        
 					p.setBuff(s.getBuff());
@@ -35,12 +38,6 @@ public class MovePlayerMsgHandler implements Handler<MovePlayerMsg> {
 				}
 			}
 		}
-//		client.Player p = Game.players.get(msg.id);
-//		System.out.println(p.id);
-//		System.out.println(msg.x);
-//		System.out.println(msg.y);
-//		p.setX(msg.x);
-//		p.setY(msg.y);
 		
 	}
 

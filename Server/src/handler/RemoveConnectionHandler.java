@@ -1,6 +1,6 @@
 package handler;
 
-import common.*;
+import messages.RemoveConnectionMsg;
 import server.Connection;
 
 public class RemoveConnectionHandler implements ServerHandler<RemoveConnectionMsg> {

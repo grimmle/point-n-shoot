@@ -1,7 +1,10 @@
-package common;
+package messages;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import common.Msg;
+import common.PlayerModel;
 
 public class MovePlayerMsg implements Msg {
 
@@ -11,5 +14,5 @@ public class MovePlayerMsg implements Msg {
 	public float velY;
 	public int x;
 	public int y;
-	public ArrayList<Player> players;
+	public ArrayList<PlayerModel> players;
 }

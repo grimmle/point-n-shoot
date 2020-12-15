@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import common.Block;
 import common.GameObject;
 import common.Pickup;
-import common.Player;
 import handler.AddConnectionHandler;
 import handler.DynamicObjectsUpdateHandler;
 import handler.GetStaticMapHandler;

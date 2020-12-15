@@ -1,4 +1,6 @@
-package common;
+package messages;
+
+import common.Msg;
 
 public class GetStaticMapMsg implements Msg {
 

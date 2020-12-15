@@ -20,8 +20,7 @@ public class Connection implements Runnable {
 	public boolean ready = false;
 	private volatile boolean running = false;
 	private MsgManager manager;
-	
-	private ArrayList<Msg> messageStack = new ArrayList<Msg>();
+
 	private LinkedBlockingQueue<Msg> messages = new LinkedBlockingQueue<Msg>(); 
 
 	public Connection(Socket socket, int id, MsgManager manager) {

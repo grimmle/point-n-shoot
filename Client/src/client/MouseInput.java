@@ -1,6 +1,8 @@
 package client;
 
 import common.*;
+import messages.DynamicObjectsUpdateMsg;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -16,7 +18,7 @@ public class MouseInput extends MouseAdapter {
 		int my = (int) (e.getY() + camera.getY());
 		
 		Player p = Game.players.get(Client.id);
-		Bullet b = new Bullet(p.getX()+15, p.getY()+15, mx, my, ((Player) p).getBuff(), p.id);
+		Bullet b = new Bullet(p.getX()+15, p.getY()+15, mx, my, ((Player) p).getBuff(), p.id, p.getColor());
 		DynamicObjectsUpdateMsg dyn = new DynamicObjectsUpdateMsg();
 		dyn.id = Client.id;
 		dyn.content = b;

@@ -19,31 +19,28 @@ public class Game extends Canvas implements Runnable {
 	private volatile boolean isRunning = false;
 	private Thread thread;
 	private Camera camera;
-	static Player player;
 	
 	public static ArrayList<GameObject> staticMap = new ArrayList<GameObject>();
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
 	public static ArrayList<Player> players = new ArrayList<Player>();
-
+	
 	private World world;
 	
 	
-	public Game(Player player) {
+	public Game(long seed) {
 		new Window(WIDTH, HEIGHT, "Game - Client " + Client.id, this);
 		
-		Game.player = player;
+		Player player = players.get(Client.id);
 		camera = new Camera(player.getX(), player.getY());
 		
 		
 		this.addKeyListener(new KeyInput());
 		this.addMouseListener(new MouseInput(camera));
 		
-		// WORLD
-		long seed = 42069;		
+		// WORLD	
 		world = new World(seed);
-		world.checkIfTilesInCache(player.getX(), player.getY());
+		World.checkIfTilesInCache(player.getX(), player.getY());
 
-		
 		start();
 	}
 	
@@ -94,7 +91,7 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public void tick() {
-		player.tick();
+		players.get(Client.id).tick();
 		camera.tick(players.get(Client.id));
 	}
 	
@@ -139,6 +136,6 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public static void main(String[] args) {
-		Game g = new Game(new Player(0, 0, 69));
+		Game g = new Game(123);
 	}
 }

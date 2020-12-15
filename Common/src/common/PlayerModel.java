@@ -1,25 +1,20 @@
-package client;
+package common;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-import common.*;
-import messages.MovePlayerMsg;
-
-public class Player extends GameObject {
+public class PlayerModel extends GameObject {
 	
-	private static final long serialVersionUID = 3216281663303148467L;
-	
+	private static final long serialVersionUID = 8617330445173219602L;
 	public int id;
+	private Color color;
 	private float buffed = 1.0f;
 	private int health = 100;
-	private Color color;
-	private int size = 30;
-
 	private boolean up = false, down = false, right = false, left = false;
+	private int size = 30;
 	
 
-	public Player(int x, int y, int id, Color color) {
+	public PlayerModel(int x, int y, int id, Color color) {
 		super(x, y, TYPE.Player);
 		this.id = id;
 		this.color = color;
@@ -27,41 +22,10 @@ public class Player extends GameObject {
 
 	@Override
 	public void tick() {
-		
-		//player movement
-		float tempX = velX;
-		float tempY = velY;
-		
-		if(up) velY = -5;
-		else if(!down) velY = 0;
-		
-		if(down) velY = 5;
-		else if(!up) velY = 0;
-		
-		if(right) velX = 5;
-		else if(!left) velX = 0;
-		
-		if(left) velX = -5;
-		else if(!right) velX = 0;
-		
-		if(tempX != velX || tempY != velY) {
-//			System.out.println("vel changed " + velX + " " + velY);
-			MovePlayerMsg move = new MovePlayerMsg();
-			move.velX = velX;
-			move.velY = velY;
-			Client.sendObject(move);
-		}
 	}
 	
 	@Override
 	public void render(Graphics g) {
-		if(health < 50) {
-			color = color.darker();
-		}
-		
-		g.setColor(getColor());
-		g.fillOval(x, y, size, size);
-		//g.fillPolygon(new int[] {x, x+15, x+30}, new int[] {y+30, y, y+30}, 3);
 	}
 
 	@Override
@@ -108,10 +72,6 @@ public class Player extends GameObject {
 	public float getBuff() {
 		return buffed;
 	}
-	
-	public void setBuff(float buff) {
-		this.buffed = buff;
-	}
 
 	public int getHealth() {
 		return health;
@@ -124,7 +84,7 @@ public class Player extends GameObject {
 	public Color getColor() {
 		return color;
 	}
-	
+
 	public int getSize() {
 		return size;
 	}

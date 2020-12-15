@@ -1,6 +1,7 @@
 package handler;
 
 import common.*;
+import messages.GetStaticMapMsg;
 import server.*;
 
 public class GetStaticMapHandler implements ServerHandler<GetStaticMapMsg> {

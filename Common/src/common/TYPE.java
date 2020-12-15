@@ -1,10 +1,9 @@
 package common;
 
-public enum ID {
+public enum TYPE {
 	
 	Player(),
 	Block(),
-	Crate(),
 	Bullet(),
 	Enemy(),
 	Pickup(),

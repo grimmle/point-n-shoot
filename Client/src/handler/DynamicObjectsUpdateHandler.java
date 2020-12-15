@@ -3,8 +3,8 @@ package handler;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import client.Game;
-import common.DynamicObjectsUpdateMsg;
 import common.GameObject;
+import messages.DynamicObjectsUpdateMsg;
 
 public class DynamicObjectsUpdateHandler implements Handler<DynamicObjectsUpdateMsg>{
 

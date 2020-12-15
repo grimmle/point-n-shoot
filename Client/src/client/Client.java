@@ -9,6 +9,9 @@ import java.net.SocketException;
 
 import common.*;
 import handler.*;
+import messages.AddConnectionMsg;
+import messages.GetStaticMapMsg;
+import messages.RemoveConnectionMsg;
 
 public class Client implements Runnable {
 

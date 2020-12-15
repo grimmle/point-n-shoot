@@ -1,7 +1,7 @@
 package handler;
 
-import common.DynamicObjectsUpdateMsg;
 import common.GameObject;
+import messages.DynamicObjectsUpdateMsg;
 import server.Connection;
 import server.ServerGame;
 

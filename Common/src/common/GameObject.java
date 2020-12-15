@@ -9,20 +9,20 @@ public abstract class GameObject implements Serializable {
 	
 	protected int x, y;
 	protected float velX = 0, velY = 0;
-	protected ID id;
+	protected TYPE type;
 	
-	public GameObject(int x, int y, ID id) {
+	public GameObject(int x, int y, TYPE type) {
 		this.x = x;
 		this.y = y;
-		this.id = id;
+		this.type = type;
 	}
 	
 	public abstract void tick();
 	public abstract void render(Graphics g);
 	public abstract Rectangle getBounds();
 	
-	public ID getId() {
-		return id;
+	public TYPE getType() {
+		return type;
 	}
 
 	public int getX() {
