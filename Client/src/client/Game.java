@@ -24,13 +24,14 @@ public class Game extends Canvas implements Runnable {
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
 	public static ArrayList<Player> players = new ArrayList<Player>();
 	
+	static Player player;
 	private World world;
 	
 	
 	public Game(long seed) {
 		new Window(WIDTH, HEIGHT, "Game - Client " + Client.id, this);
 		
-		Player player = players.get(Client.id);
+		player = players.get(Client.id);
 		camera = new Camera(player.getX(), player.getY());
 		
 		
@@ -91,8 +92,9 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public void tick() {
-		players.get(Client.id).tick();
-		camera.tick(players.get(Client.id));
+		player = players.get(Client.id);
+		player.tick();
+		camera.tick(player);
 	}
 	
 	public void render() {
