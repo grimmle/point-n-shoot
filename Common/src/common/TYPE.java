@@ -7,4 +7,5 @@ public enum TYPE {
 	Bullet(),
 	Enemy(),
 	Pickup(),
+	Agent(),
 }

@@ -27,13 +27,14 @@ public class Game extends Canvas implements Runnable {
 	static Player player;
 	private World world;
 	
+	public static Agent agent;
 	
 	public Game(long seed) {
 		new Window(WIDTH, HEIGHT, "Game - Client " + Client.id, this);
 		
 		player = players.get(Client.id);
 		camera = new Camera(player.getX(), player.getY());
-		
+		agent = new Agent(player.getX(), player.getY(), player.getColor());		
 		
 		this.addKeyListener(new KeyInput());
 		this.addMouseListener(new MouseInput(camera));
@@ -95,6 +96,7 @@ public class Game extends Canvas implements Runnable {
 		player = players.get(Client.id);
 		player.tick();
 		camera.tick(player);
+		agent.tick();
 	}
 	
 	public void render() {
@@ -129,6 +131,8 @@ public class Game extends Canvas implements Runnable {
 		for(GameObject player : players) {
 			player.render(g);
 		}
+		
+		agent.render(g);
 		
 		g2d.translate(camera.getX(), camera.getY());
 		

@@ -96,23 +96,30 @@ public class ServerGame implements Runnable {
 					playersUpdated = true;
 					
 					World.checkIfTilesInCache(newX, newY);
-			        WorldTile playerTile = World.getTileAt(newX, newY);
+			        ArrayList<GameObject> blocks = new ArrayList<GameObject>();
+			        WorldTile current = World.getTileAt(newX, newY);
+			        WorldTile left = World.getTileAt(newX-1, newY);
+			        WorldTile right = World.getTileAt(newX+1, newY);
+			        WorldTile up = World.getTileAt(newX, newY-1);
+			        WorldTile down = World.getTileAt(newX, newY+1);
+			        WorldTile[] surroundingTiles = { left, right, up, down };
+			        
+			        blocks.addAll(current.getBlocks());
+			        for (WorldTile tile : surroundingTiles) {
+						blocks.addAll(tile.getBlocks());
+					}
 //			        QuadTree.dfs(playerTile.getObstacles());
 			        
-			        boolean collided = false;
-					for(GameObject block : playerTile.getBlocks()) {
+					for(GameObject block : blocks) {
 						if(p.getBounds().intersects(block.getBounds())) {
 							System.out.println("COLLISION!!!");
-							collided = true;
+							p.setX((int) (p.getX() + (p.getVelX() * -1)));
+							p.setY((int) (p.getY() + (p.getVelY() * -1)));
 							break;
 						}
 					}
-					if(collided) {
-						p.setX((int) (p.getX() + (p.getVelX() * -1)));
-						p.setY((int) (p.getY() + (p.getVelY() * -1)));
-					}
 					
-					GameObject hit = null;
+					
 //					for(GameObject obj : dynamicObjects) {
 //						if(obj.getId() == ID.Pickup) {
 //							if(p.getBounds().intersects(obj.getBounds())) {
@@ -123,18 +130,22 @@ public class ServerGame implements Runnable {
 //							}
 //						}
 //					}
-					if(playerTile.pickup != null) {
-						dynamicObjects.addIfAbsent(playerTile.pickup);
-						dynamicsUpdated = true;
-						if(p.getBounds().intersects(playerTile.pickup.getBounds())) {
-							System.out.println("PICKUP");
-							hit = playerTile.pickup;
+					for (WorldTile tile : surroundingTiles) {
+						GameObject hit = null;
+						if(tile.pickup != null) {
+							dynamicObjects.addIfAbsent(tile.pickup);
 							dynamicsUpdated = true;
-							p.addBuff(0.5f);
-							playerTile.pickup = null;
+							if(p.getBounds().intersects(tile.pickup.getBounds())) {
+								System.out.println("PICKUP");
+								hit = tile.pickup;
+								dynamicsUpdated = true;
+								if(p.getBuff() < 3) p.addBuff(0.5f);
+								tile.pickup = null;
+							}
 						}
+						if(hit != null) dynamicObjects.remove(hit);
 					}
-					if(hit != null) dynamicObjects.remove(hit);
+					
 				}
 			}
 			//check bullet collision

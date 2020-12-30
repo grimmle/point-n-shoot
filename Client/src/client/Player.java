@@ -17,7 +17,6 @@ public class Player extends GameObject {
 	private int size = 30;
 
 	private boolean up = false, down = false, right = false, left = false;
-	
 
 	public Player(int x, int y, int id, Color color) {
 		super(x, y, TYPE.Player);
@@ -27,6 +26,8 @@ public class Player extends GameObject {
 
 	@Override
 	public void tick() {
+		
+		if(Game.agent != null) Game.agent.setTarget(x, y);
 		
 		//player movement
 		float tempX = velX;
@@ -67,6 +68,10 @@ public class Player extends GameObject {
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, size, size);
+	}
+	
+	public Vector2D getLocation() {
+		return new Vector2D(x, y);
 	}
 	
 	public boolean isUp() {

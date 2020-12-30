@@ -3,6 +3,8 @@ package common;
 import java.awt.Graphics;
 import java.util.concurrent.ConcurrentHashMap;
 
+import util.Helper;
+
 public class World {
     public static final int TILE_SIZE = 500;
     public static final int BLOCK_SIZE = 50;
@@ -17,6 +19,7 @@ public class World {
     //besere Datenstruktur wählen? HashMap z.B.?
     WorldTile[] cachedTiles = new WorldTile[30];
     static ConcurrentHashMap<CoordinatesKey, WorldTile> cache = new ConcurrentHashMap<CoordinatesKey, WorldTile>();
+    static LRUCache lru = new LRUCache(9);
     
     double getZ(int x, int y) {
         int tileX = x / TILE_SIZE;
@@ -71,12 +74,13 @@ public class World {
 		for(int y = 0; y < BLOCKS_AMOUNT; y++) {
 			float xoff = tileX + 0.0f;
 			for(int x = 0; x < BLOCKS_AMOUNT; x++) {
-				double out = map(OS.noise2(xoff, yoff), -1, 1, 0, 255);
+				double out = Helper.map(OS.noise2(xoff, yoff), -1, 1, 0, 255);
 //				System.out.println("VALUE @ x:" + x + ", y: " + y + " -> " + out);
 				tile.z[x][y] = out > 190 ? 255 : 0;
 				if(tile.z[x][y] == 255) {
 					tile.blocks.add(new Block(tileX*TILE_SIZE + x*BLOCK_SIZE, tileY*TILE_SIZE + y*BLOCK_SIZE, BLOCK_SIZE));
 					tile.obstacles.insert(tileX*TILE_SIZE + x*BLOCK_SIZE, tileY*TILE_SIZE + y*BLOCK_SIZE, new Block(tileX*TILE_SIZE + x*BLOCK_SIZE, tileY*TILE_SIZE + y*BLOCK_SIZE, BLOCK_SIZE));
+//					System.out.println("qt: " + tile.getObstacles());
 				}
 				
 				xoff += 0.1;
@@ -95,15 +99,11 @@ public class World {
 		    }
 		    tries++;
 		}
+//		lru.set(new CoordinatesKey(tileX, tileY), tile);
 		cache.put(new CoordinatesKey(tileX, tileY), tile);
     }
     
-    private static double map(double value, int start1, int stop1, int start2, int stop2) {
-		return start2 + (stop2 - start2) * (value - start1) / (stop1 - start1);
-	}
-    
     public void render(Graphics g) {
-//    	System.out.println("world render");
     	for(WorldTile tile : getCache().values()) {
     		tile.render(g);
     	}
@@ -112,6 +112,7 @@ public class World {
     public static WorldTile getTileAt(int x, int y) {
     	int tileX = x / World.TILE_SIZE;
         int tileY = y / World.TILE_SIZE;
+//        return lru.get(new CoordinatesKey(tileX, tileY));
     	return cache.get(new CoordinatesKey(tileX, tileY));
     }
 
