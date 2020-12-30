@@ -71,6 +71,14 @@ public class Agent extends GameObject {
 		target.set(x, y);
 	}
 	
+	public void setLocation(Vector2D loc) {
+		location.set(loc);
+	}
+	
+	public Vector2D getLocation() {
+		return location;
+	}
+	
 	public void applyForce(Vector2D force) {
 //		System.out.println("APPLY FORCE: " + force.x + " " + force.y);
 		acceleration.add(force);
@@ -100,6 +108,10 @@ public class Agent extends GameObject {
 		
 		Vector2D steer = Vector2D.subtract(desired, velocity);
 		return steer;
+	}
+	
+	public Vector2D getAcceleration() {
+		return acceleration;
 	}
 
 }

@@ -2,6 +2,7 @@ package server;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import common.Agent;
 import common.Bullet;
 import common.GameObject;
 import common.TYPE;
@@ -141,11 +142,18 @@ public class ServerGame implements Runnable {
 								dynamicsUpdated = true;
 								if(p.getBuff() < 3) p.addBuff(0.5f);
 								tile.pickup = null;
+								if(p.agent == null) p.setAgent(new Agent(p.getX(), p.getY(), p.getColor()));
 							}
 						}
 						if(hit != null) dynamicObjects.remove(hit);
 					}
-					
+				}
+				
+				if(p.agent != null) {
+					p.agent.setTarget(p.getX(), p.getY());
+					p.agent.tick();
+					playersUpdated = true;
+//					if(p.agent.getAcceleration().x != 0 && p.agent.getAcceleration().y != 0) 
 				}
 			}
 			//check bullet collision

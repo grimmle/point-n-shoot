@@ -17,6 +17,8 @@ public class Player extends GameObject {
 	private int size = 30;
 
 	private boolean up = false, down = false, right = false, left = false;
+	
+	public Agent agent;
 
 	public Player(int x, int y, int id, Color color) {
 		super(x, y, TYPE.Player);
@@ -27,7 +29,10 @@ public class Player extends GameObject {
 	@Override
 	public void tick() {
 		
-		if(Game.agent != null) Game.agent.setTarget(x, y);
+//		if(getAgent() != null) {
+//			getAgent().setTarget(x, y);
+//			agent.tick();
+//		}
 		
 		//player movement
 		float tempX = velX;
@@ -56,12 +61,14 @@ public class Player extends GameObject {
 	
 	@Override
 	public void render(Graphics g) {
-		if(health < 50) {
-			color = color.darker();
-		}
+//		if(health < 50) {
+//			color = Color.gray;
+//		}
 		
 		g.setColor(getColor());
 		g.fillOval(x, y, size, size);
+		
+		if(agent != null) agent.render(g);
 		//g.fillPolygon(new int[] {x, x+15, x+30}, new int[] {y+30, y, y+30}, 3);
 	}
 
@@ -136,6 +143,14 @@ public class Player extends GameObject {
 
 	public void setSize(int size) {
 		this.size = size;
+	}
+
+	public Agent getAgent() {
+		return agent;
+	}
+
+	public void setAgent(Agent agent) {
+		this.agent = agent;
 	}
 
 }

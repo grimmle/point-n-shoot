@@ -1,12 +1,16 @@
 package common;
 
+import java.io.Serializable;
+
 /*
  * @author github.com/gunvirranu
  */
 
-public class Vector2D {
+public class Vector2D implements Serializable {
 
-    public double x;
+	private static final long serialVersionUID = -5473699039529330150L;
+	
+	public double x;
     public double y;
     
     public Vector2D() { }

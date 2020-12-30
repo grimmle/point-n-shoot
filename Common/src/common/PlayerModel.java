@@ -13,7 +13,7 @@ public class PlayerModel extends GameObject {
 	private boolean up = false, down = false, right = false, left = false;
 	private int size = 30;
 	
-	private Agent agent;
+	public Agent agent;
 
 	public PlayerModel(int x, int y, int id, Color color) {
 		super(x, y, TYPE.Player);
@@ -92,6 +92,14 @@ public class PlayerModel extends GameObject {
 
 	public void setSize(int size) {
 		this.size = size;
+	}
+	
+	public Agent getAgent() {
+		return agent;
+	}
+
+	public void setAgent(Agent agent) {
+		this.agent = agent;
 	}
 
 }
