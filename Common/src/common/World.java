@@ -87,6 +87,8 @@ public class World {
 			}
 			yoff += 0.1;
 		}
+		
+		//generate pickup
 		int tries = 0;
 		while(tries < 25) {
 			int min = 0;

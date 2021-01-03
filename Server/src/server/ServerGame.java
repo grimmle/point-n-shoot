@@ -6,6 +6,7 @@ import common.Agent;
 import common.Bullet;
 import common.GameObject;
 import common.TYPE;
+import common.Vector2D;
 import common.PlayerModel;
 import common.World;
 import common.WorldTile;
@@ -71,7 +72,7 @@ public class ServerGame implements Runnable {
 			lastTime = now;
 			while(delta >= 1) {
 				delta--;
-				tick();
+				tick(System.currentTimeMillis() - timer);
 			}
 			sendUpdate();
 			frames++;
@@ -84,7 +85,7 @@ public class ServerGame implements Runnable {
 		stop();
 	}
 	
-	public void tick() {
+	public void tick(long timer) {
 		//update players positions & other stats
 		if(players.size() > 0) {
 			//check player collision
@@ -109,10 +110,9 @@ public class ServerGame implements Runnable {
 			        for (WorldTile tile : surroundingTiles) {
 						blocks.addAll(tile.getBlocks());
 					}
-//			        QuadTree.dfs(playerTile.getObstacles());
 			        
 					for(GameObject block : blocks) {
-						if(p.getBounds().intersects(block.getBounds())) {
+						if(p.getBounds().intersects(block.getBounds()) || block.getBounds().intersects(p.getBounds())) {
 							System.out.println("COLLISION!!!");
 							p.setX((int) (p.getX() + (p.getVelX() * -1)));
 							p.setY((int) (p.getY() + (p.getVelY() * -1)));
@@ -140,7 +140,7 @@ public class ServerGame implements Runnable {
 								System.out.println("PICKUP");
 								hit = tile.pickup;
 								dynamicsUpdated = true;
-								if(p.getBuff() < 3) p.addBuff(0.5f);
+								if(p.getBuff() < 5) p.addBuff(0.5f);
 								tile.pickup = null;
 								if(p.agent == null) p.setAgent(new Agent(p.getX(), p.getY(), p.getColor()));
 							}
@@ -153,15 +153,38 @@ public class ServerGame implements Runnable {
 					p.agent.setTarget(p.getX(), p.getY());
 					p.agent.tick();
 					playersUpdated = true;
-//					if(p.agent.getAcceleration().x != 0 && p.agent.getAcceleration().y != 0) 
+//					if(p.agent.getAcceleration().x != 0 && p.agent.getAcceleration().y != 0)
+					
+					int [] closestPlayer = {-1, Integer.MAX_VALUE};
+					for(PlayerModel enemy : players) {
+						if(p.id == enemy.id) continue;
+						
+						Vector2D vec = Vector2D.subtract(p.getLocation(), enemy.getLocation());
+						double d = vec.getLength();
+						if(d < closestPlayer[1]) {							
+							closestPlayer = new int[]{ enemy.id, (int)d};
+						}
+					}
+
+					if(closestPlayer[1] < 500) {
+						if(Math.round(timer/10)*10 % 500 == 0) {			
+							//shoot at enemy
+							PlayerModel en = players.get(closestPlayer[0]);
+//							System.out.println(en.getX() + " " + en.getY());
+							dynamicObjects.add(new Bullet(p.agent.getX(), p.agent.getY(), en.getX(), en.getY(), 1, p.id, p.getColor()));
+						}
+					}
+					
 				}
 			}
+			
+			
 			//check bullet collision
 			for(GameObject obj : dynamicObjects) {
 				if(obj.getType() == TYPE.Bullet) {
 					if((System.currentTimeMillis() - ((Bullet)obj).timestamp) > 3000) {
 						dynamicObjects.remove(obj);
-						System.out.println("REMOVED");
+						System.out.println("REMOVED 1");
 					} else {
 //						System.out.println("BULLET");
 						int newX = (int) (obj.getX() + obj.getVelX());
@@ -172,7 +195,9 @@ public class ServerGame implements Runnable {
 						for(PlayerModel p : players) {
 							if(((Bullet) obj).id != p.id) {
 								if(p.getBounds().intersects(obj.getBounds())) {
-									p.setHealth(p.getHealth() - 20);
+//									int damage = (int) players.get(((Bullet)obj).id).getBuff() * 10;
+									int damage = 10;
+									p.setHealth(p.getHealth() - damage);
 									if(p.getHealth() <= 0) {
 										System.out.println("KILLED");
 										p.setX(100000);
@@ -181,7 +206,7 @@ public class ServerGame implements Runnable {
 									}
 									playersUpdated = true;
 									dynamicObjects.remove(obj);
-									System.out.println("REMOVED");
+									System.out.println("REMOVED 2");
 								}
 							}
 						}
@@ -210,7 +235,6 @@ public class ServerGame implements Runnable {
 						MovePlayerMsg move = new MovePlayerMsg();
 						move.id = i;
 						move.players = ServerGame.players;
-//						System.out.println("SEND UPDATE --- connection: " + i + " --- player count: " + players.size() + " --- ");
 						connection.sendObject(move);
 					}
 					//send dynamic objects update
@@ -224,12 +248,8 @@ public class ServerGame implements Runnable {
 					}
 				}
 			});
-			if(dynamicsUpdated) {
-				dynamicsUpdated = false;
-			}
-			if(playersUpdated) {
-				playersUpdated = false;
-			}
+			dynamicsUpdated = false;
+			playersUpdated = false;
 		}
 	}
 }

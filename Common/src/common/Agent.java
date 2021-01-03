@@ -32,24 +32,16 @@ public class Agent extends GameObject {
 		velocity = new Vector2D(0, 0);
 		location = new Vector2D(x, y-5);
 		target = new Vector2D(x, y);
-//		System.out.println("ACC " + acceleration.x + " " + acceleration.y);
-//		System.out.println("VEL " + velocity.x + " " + velocity.y);
-//		System.out.println("LOC " + location.x + " " + location.y);
 	}
 
 	@Override
 	public void tick() {
-		//get current player position
-//		Vector2D target = Game.players.get(playerId).getLocation();
-//		System.out.println("TARGET " + target.x + " " + target.y);
-//		System.out.println(location.x + " " + location.y);
 		//seek()
 		Vector2D steer = arrive(target);
 		//force()
 		applyForce(steer);
 		//update()
 		location.add(velocity);
-//		System.out.println(location.x + " " + location.y + " added " + velocity.x + " " + velocity.y);
 		velocity.add(acceleration);
 		//clear acceleration
 		acceleration.multiply(0);
@@ -57,9 +49,11 @@ public class Agent extends GameObject {
 
 	@Override
 	public void render(Graphics g) {
-//		System.out.println(location.x + " " + location.y);
+		int offsetX = (int)location.x-(size/2);
+		int offsetY = (int)location.y-(size/2);
+		
 		g.setColor(color);
-		g.fillOval((int)location.x, (int)location.y, size, size);
+		g.fillOval(offsetX, offsetY, size, size);
 	}
 
 	@Override
@@ -112,6 +106,16 @@ public class Agent extends GameObject {
 	
 	public Vector2D getAcceleration() {
 		return acceleration;
+	}
+	
+	@Override
+	public int getX() {
+		return (int)location.x;
+	}
+	
+	@Override
+	public int getY() {
+		return (int)location.y;
 	}
 
 }

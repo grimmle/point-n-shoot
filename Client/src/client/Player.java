@@ -65,8 +65,13 @@ public class Player extends GameObject {
 //			color = Color.gray;
 //		}
 		
+		int offsetX = x-(size/2);
+		int offsetY = y-(size/2);
+		
 		g.setColor(getColor());
-		g.fillOval(x, y, size, size);
+		g.fillOval(offsetX, offsetY, size, size);
+//		g.setColor(Color.black);
+//		g.drawRect(offsetX, offsetY, size, size);
 		
 		if(agent != null) agent.render(g);
 		//g.fillPolygon(new int[] {x, x+15, x+30}, new int[] {y+30, y, y+30}, 3);
@@ -74,7 +79,9 @@ public class Player extends GameObject {
 
 	@Override
 	public Rectangle getBounds() {
-		return new Rectangle(x, y, size, size);
+		int offsetX = x-(size/2);
+		int offsetY = y-(size/2);
+		return new Rectangle(offsetX, offsetY, size, size);
 	}
 	
 	public Vector2D getLocation() {

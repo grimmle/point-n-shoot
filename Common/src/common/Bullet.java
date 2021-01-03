@@ -40,8 +40,11 @@ public class Bullet extends GameObject {
 
 	@Override
 	public void render(Graphics g) {
+		int offsetX = x-(size/2);
+		int offsetY = y-(size/2);
+		
 		g.setColor(color);
-		g.fillOval(x, y, size, size);
+		g.fillOval(offsetX, offsetY, size, size);
 	}
 
 	@Override

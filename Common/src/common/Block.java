@@ -25,6 +25,8 @@ public class Block extends GameObject {
 	public void render(Graphics g) {
 		g.setColor(Color.black);
 		g.fillRect(x, y, size, size);
+//		g.drawRect(x, y, size, size);
+//		g.fillRect(x+size/2, y+size/2, 1, 1);
 	}
 
 	@Override

@@ -31,7 +31,13 @@ public class PlayerModel extends GameObject {
 
 	@Override
 	public Rectangle getBounds() {
-		return new Rectangle(x, y, size, size);
+		int offsetX = x-(size/2);
+		int offsetY = y-(size/2);
+		return new Rectangle(offsetX, offsetY, size, size);
+	}
+	
+	public Vector2D getLocation() {
+		return new Vector2D(x, y);
 	}
 	
 	public boolean isUp() {
