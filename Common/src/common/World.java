@@ -16,37 +16,12 @@ public class World {
     	OS = new OpenSimplex2F(seed);
     }
 
-    //besere Datenstruktur wählen? HashMap z.B.?
-    WorldTile[] cachedTiles = new WorldTile[30];
     static ConcurrentHashMap<CoordinatesKey, WorldTile> cache = new ConcurrentHashMap<CoordinatesKey, WorldTile>();
     static LRUCache lru = new LRUCache(9);
     
-    double getZ(int x, int y) {
-        int tileX = x / TILE_SIZE;
-        int tileY = y / TILE_SIZE;
-        int xInsideTile = x % TILE_SIZE;
-        int yInsideTile = y % TILE_SIZE;
-
-        for (int i = 0; i < cachedTiles.length; ++i) {
-            if (cachedTiles[i].x == tileX && cachedTiles[i].y == tileY) {
-                // nutzungszeitstempel aktualisieren
-                return cachedTiles[i].z[xInsideTile][yInsideTile];
-            }
-        }
-        // hier Ladebildschirm!! Daten sind noch nicht da!
-        throw new RuntimeException("Daten nicht da!");
-    }
-
-    
-    // Aufrufen z.B. bei Bewegungsnachrichten
     public static void checkIfTilesInCache(int playerX, int playerY) {
         int tileX = playerX / TILE_SIZE;
         int tileY = playerY / TILE_SIZE;
-//        System.out.println("tileX: " + tileX + " tileY: " + tileY);
-        
-        // suche, ob Kachel mit Koordinaten kachelX-1, kachelY im Cache enthalten ist
-        // falls nicht -> generieren
-        // analog für rechts, oben, unten bzw. 3x3 Feld
         
         if(getCache().get(new CoordinatesKey(tileX-1, tileY-1)) == null) generateTile(tileX-1, tileY-1);
         if(getCache().get(new CoordinatesKey(tileX, tileY-1)) == null) generateTile(tileX, tileY-1);
@@ -63,11 +38,7 @@ public class World {
 
     
     private static void generateTile(int tileX, int tileY) {
-        //Bereich laden / generieren oder Mischung aus beidem
-//    	System.out.println("generating tile: " + tileX + ", " + tileY);
-    	
     	WorldTile tile = new WorldTile(tileX, tileY);
-    	
     	tile.z = new double[BLOCKS_AMOUNT][BLOCKS_AMOUNT];
     	
     	float yoff = tileY + 0.0f;
@@ -75,20 +46,17 @@ public class World {
 			float xoff = tileX + 0.0f;
 			for(int x = 0; x < BLOCKS_AMOUNT; x++) {
 				double out = Helper.map(OS.noise2(xoff, yoff), -1, 1, 0, 255);
-//				System.out.println("VALUE @ x:" + x + ", y: " + y + " -> " + out);
-				tile.z[x][y] = out > 190 ? 255 : 0;
+				tile.z[x][y] = out > 150 ? 255 : 0;
 				if(tile.z[x][y] == 255) {
-					tile.blocks.add(new Block(tileX*TILE_SIZE + x*BLOCK_SIZE, tileY*TILE_SIZE + y*BLOCK_SIZE, BLOCK_SIZE));
-					tile.obstacles.insert(tileX*TILE_SIZE + x*BLOCK_SIZE, tileY*TILE_SIZE + y*BLOCK_SIZE, new Block(tileX*TILE_SIZE + x*BLOCK_SIZE, tileY*TILE_SIZE + y*BLOCK_SIZE, BLOCK_SIZE));
-//					System.out.println("qt: " + tile.getObstacles());
+					tile.obstacles.insert(new Block(tileX*TILE_SIZE + x*BLOCK_SIZE, tileY*TILE_SIZE + y*BLOCK_SIZE, BLOCK_SIZE));
 				}
-				
 				xoff += 0.1;
 			}
 			yoff += 0.1;
 		}
 		
 		//generate pickup
+		//TODO: think of a better way
 		int tries = 0;
 		while(tries < 25) {
 			int min = 0;
@@ -101,7 +69,6 @@ public class World {
 		    }
 		    tries++;
 		}
-//		lru.set(new CoordinatesKey(tileX, tileY), tile);
 		cache.put(new CoordinatesKey(tileX, tileY), tile);
     }
     
@@ -114,7 +81,6 @@ public class World {
     public static WorldTile getTileAt(int x, int y) {
     	int tileX = x / World.TILE_SIZE;
         int tileY = y / World.TILE_SIZE;
-//        return lru.get(new CoordinatesKey(tileX, tileY));
     	return cache.get(new CoordinatesKey(tileX, tileY));
     }
 

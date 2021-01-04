@@ -32,7 +32,6 @@ public class Game extends Canvas implements Runnable {
 		
 		player = players.get(Client.id);
 		camera = new Camera(player.getX(), player.getY());
-//		players.get(Client.id).setAgent(new Agent(player.getX(), player.getY(), player.getColor()));		
 		
 		this.addKeyListener(new KeyInput());
 		this.addMouseListener(new MouseInput(camera));

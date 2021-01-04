@@ -1,13 +1,16 @@
 package server;
+import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import common.Agent;
+import common.Block;
 import common.Bullet;
 import common.GameObject;
+import common.PlayerModel;
 import common.TYPE;
 import common.Vector2D;
-import common.PlayerModel;
 import common.World;
 import common.WorldTile;
 import messages.DynamicObjectsUpdateMsg;
@@ -45,15 +48,6 @@ public class ServerGame implements Runnable {
 	}
 	
 	private void initGame() {
-//		staticMap.add(new Block(80, 250));
-//		staticMap.add(new Block(320, 760));
-//		staticMap.add(new Block(580, 20));
-//		dynamicObjects.add(new Pickup(150, 250));
-//		dynamicObjects.add(new Pickup(550, 250));
-//		dynamicObjects.add(new Pickup(275, 300));
-//		dynamicObjects.add(new Pickup(295, 300));
-//		dynamicObjects.add(new Pickup(550, 500));
-
 		world = new World(SEED);
 	}
 
@@ -88,114 +82,125 @@ public class ServerGame implements Runnable {
 	public void tick(long timer) {
 		//update players positions & other stats
 		if(players.size() > 0) {
-			//check player collision
-			for(PlayerModel p : players) {
-				if(p.getVelX() != 0 || p.getVelY() != 0) {
-					int newX = (int) (p.getX() + p.getVelX());
-					int newY = (int) (p.getY() + p.getVelY());
-					p.setX(newX);
-					p.setY(newY);
-					playersUpdated = true;
-					
-					World.checkIfTilesInCache(newX, newY);
-			        ArrayList<GameObject> blocks = new ArrayList<GameObject>();
-			        WorldTile current = World.getTileAt(newX, newY);
-			        WorldTile left = World.getTileAt(newX-1, newY);
-			        WorldTile right = World.getTileAt(newX+1, newY);
-			        WorldTile up = World.getTileAt(newX, newY-1);
-			        WorldTile down = World.getTileAt(newX, newY+1);
-			        WorldTile[] surroundingTiles = { left, right, up, down };
-			        
-			        blocks.addAll(current.getBlocks());
-			        for (WorldTile tile : surroundingTiles) {
-						blocks.addAll(tile.getBlocks());
-					}
-			        
-					for(GameObject block : blocks) {
-						if(p.getBounds().intersects(block.getBounds()) || block.getBounds().intersects(p.getBounds())) {
-							System.out.println("COLLISION!!!");
-							p.setX((int) (p.getX() + (p.getVelX() * -1)));
-							p.setY((int) (p.getY() + (p.getVelY() * -1)));
-							break;
-						}
-					}
-					
-					
-//					for(GameObject obj : dynamicObjects) {
-//						if(obj.getId() == ID.Pickup) {
-//							if(p.getBounds().intersects(obj.getBounds())) {
-//								System.out.println("PICKUP");
-//								hit = obj;
-//								dynamicsUpdated = true;
-//								p.addBuff(0.5f);	
-//							}
-//						}
-//					}
-					for (WorldTile tile : surroundingTiles) {
-						GameObject hit = null;
-						if(tile.pickup != null) {
-							dynamicObjects.addIfAbsent(tile.pickup);
-							dynamicsUpdated = true;
-							if(p.getBounds().intersects(tile.pickup.getBounds())) {
-								System.out.println("PICKUP");
-								hit = tile.pickup;
-								dynamicsUpdated = true;
-								if(p.getBuff() < 5) p.addBuff(0.5f);
-								tile.pickup = null;
-								if(p.agent == null) p.setAgent(new Agent(p.getX(), p.getY(), p.getColor()));
-							}
-						}
-						if(hit != null) dynamicObjects.remove(hit);
+			checkPlayerCollision(timer);
+			checkBulletCollision();
+		}
+	}
+	
+	public void checkPlayerCollision(long timer) {
+		for(PlayerModel p : players) {
+			if(p.getVelX() != 0 || p.getVelY() != 0) {
+				int newX = (int) (p.getX() + p.getVelX());
+				int newY = (int) (p.getY() + p.getVelY());
+				p.setX(newX);
+				p.setY(newY);
+				playersUpdated = true;
+				
+				World.checkIfTilesInCache(newX, newY);
+		        ArrayList<GameObject> blocks = new ArrayList<GameObject>();
+		        WorldTile current = World.getTileAt(newX, newY);
+		        WorldTile left = World.getTileAt(newX-1, newY);
+		        WorldTile right = World.getTileAt(newX+1, newY);
+		        WorldTile up = World.getTileAt(newX, newY-1);
+		        WorldTile down = World.getTileAt(newX, newY+1);
+		        WorldTile[] surroundingTiles = { left, right, up, down };
+		        
+		        //CHECK COLLISION WITH BLOCKS WITHIN 300px
+		        Rectangle playerRange = new Rectangle(p.getX()-150, p.getY()-150, 300, 300);
+//		        Rectangle playerRange = current.getBounds();
+		        List<Block> foundBlocks = current.getObstacles().query(playerRange);
+		        
+		        blocks.addAll(current.getBlocks());
+		        for (WorldTile tile : surroundingTiles) {
+					blocks.addAll(tile.getBlocks());
+				}
+		        
+		        //CHECK COLLISION WITH WORLD BLOCKS
+				for(GameObject block : foundBlocks) {
+					if(p.getBounds().intersects(block.getBounds()) || block.getBounds().intersects(p.getBounds())) {
+						System.out.println("COLLISION!!!");
+						p.setX((int) (p.getX() + (p.getVelX() * -1)));
+						p.setY((int) (p.getY() + (p.getVelY() * -1)));
+						break;
 					}
 				}
 				
-				if(p.agent != null) {
-					p.agent.setTarget(p.getX(), p.getY());
-					p.agent.tick();
-					playersUpdated = true;
-//					if(p.agent.getAcceleration().x != 0 && p.agent.getAcceleration().y != 0)
-					
-					int [] closestPlayer = {-1, Integer.MAX_VALUE};
-					for(PlayerModel enemy : players) {
-						if(p.id == enemy.id) continue;
-						
-						Vector2D vec = Vector2D.subtract(p.getLocation(), enemy.getLocation());
-						double d = vec.getLength();
-						if(d < closestPlayer[1]) {							
-							closestPlayer = new int[]{ enemy.id, (int)d};
+				//GENERATE PICKUPS AND CHECK FOR COLLISION
+				for (WorldTile tile : surroundingTiles) {
+					GameObject hit = null;
+					if(tile.pickup != null) {
+						dynamicObjects.addIfAbsent(tile.pickup);
+						dynamicsUpdated = true;
+						if(p.getBounds().intersects(tile.pickup.getBounds())) {
+							System.out.println("PICKUP");
+							hit = tile.pickup;
+							dynamicsUpdated = true;
+							if(p.getBuff() < 5) p.addBuff(0.5f);
+							tile.pickup = null;
+							if(p.agent == null) p.setAgent(new Agent(p.getX(), p.getY(), p.getColor()));
 						}
 					}
-
-					if(closestPlayer[1] < 500) {
-						if(Math.round(timer/10)*10 % 500 == 0) {			
-							//shoot at enemy
-							PlayerModel en = players.get(closestPlayer[0]);
-//							System.out.println(en.getX() + " " + en.getY());
-							dynamicObjects.add(new Bullet(p.agent.getX(), p.agent.getY(), en.getX(), en.getY(), 1, p.id, p.getColor()));
-						}
-					}
-					
+					if(hit != null) dynamicObjects.remove(hit);
 				}
 			}
 			
+			//UPDATE PLAYER AGENT
+			updateAgent(p, timer);
+		}
+	}
+	
+	public void updateAgent(PlayerModel p, long timer) {
+		if(p.agent != null) {
+			System.out.println(p.id + ": I got agentzzZZzZZ");
+			p.agent.setTarget(p.getX(), p.getY());
+			//p.agent.updateSurroundings() to pass lookahead to agent
+			p.agent.tick();
+			playersUpdated = true;
 			
-			//check bullet collision
-			for(GameObject obj : dynamicObjects) {
-				if(obj.getType() == TYPE.Bullet) {
-					if((System.currentTimeMillis() - ((Bullet)obj).timestamp) > 3000) {
-						dynamicObjects.remove(obj);
-						System.out.println("REMOVED 1");
-					} else {
-//						System.out.println("BULLET");
-						int newX = (int) (obj.getX() + obj.getVelX());
-						int newY = (int) (obj.getY() + obj.getVelY());
-						World.checkIfTilesInCache(newX, newY);
-						obj.setX(newX);
-						obj.setY(newY);
-						for(PlayerModel p : players) {
-							if(((Bullet) obj).id != p.id) {
+			int [] closestPlayer = {-1, Integer.MAX_VALUE};
+			for(PlayerModel enemy : players) {
+				if(p.id == enemy.id) continue;
+				
+				Vector2D vec = Vector2D.subtract(p.getLocation(), enemy.getLocation());
+				double d = vec.getLength();
+				if(d < closestPlayer[1]) {							
+					closestPlayer = new int[]{ enemy.id, (int)d};
+				}
+			}
+
+			if(closestPlayer[1] < 500) {
+				if(Math.round(timer/10)*10 % 500 == 0) {
+					//shoot at enemy
+					PlayerModel en = players.get(closestPlayer[0]);
+					//System.out.println(en.getX() + " " + en.getY());
+					dynamicObjects.add(new Bullet(p.agent.getX(), p.agent.getY(), en.getX(), en.getY(), 1, p.id, p.getColor()));
+				}
+			}
+		}
+	}
+	
+	public void checkBulletCollision() {
+		for(GameObject obj : dynamicObjects) {
+			if(obj.getType() == TYPE.Bullet) {
+				//REMOVE BULLET IF IT HAS TRAVELED A MAX TIME
+				if((System.currentTimeMillis() - ((Bullet)obj).timestamp) > 3000) {
+					dynamicObjects.remove(obj);
+					System.out.println("REMOVED TIME");
+				} else {
+					int newX = (int) (obj.getX() + obj.getVelX());
+					int newY = (int) (obj.getY() + obj.getVelY());
+					World.checkIfTilesInCache(newX, newY);
+					WorldTile current = World.getTileAt(newX, newY);
+					obj.setX(newX);
+					obj.setY(newY);
+					
+					//CHECK COLLISION WITH PLAYERS
+					for(PlayerModel p : players) {
+						if(((Bullet) obj).id != p.id) {
+							WorldTile player = World.getTileAt(p.getX(), p.getY());
+							if(current.x == player.x && current.y == player.y) {
 								if(p.getBounds().intersects(obj.getBounds())) {
-//									int damage = (int) players.get(((Bullet)obj).id).getBuff() * 10;
+									//int damage = (int) players.get(((Bullet)obj).id).getBuff() * 10;
 									int damage = 10;
 									p.setHealth(p.getHealth() - damage);
 									if(p.getHealth() <= 0) {
@@ -206,23 +211,28 @@ public class ServerGame implements Runnable {
 									}
 									playersUpdated = true;
 									dynamicObjects.remove(obj);
-									System.out.println("REMOVED 2");
+									System.out.println("REMOVED HIT");
 								}
 							}
 						}
-						WorldTile currentTile = World.getTileAt(newX, newY);
-						for(GameObject block : currentTile.getBlocks()) {
-							if(obj.getBounds().intersects(block.getBounds())) {
-								dynamicObjects.remove(obj);
-								System.out.println("REMOVED");
-							}
+					}
+					
+					//CHECK COLLISION WITH BLOCKS WITHIN 300px
+					Rectangle range = new Rectangle(obj.getX()-150, obj.getY()-150, 300, 300);
+					List<Block> foundBlocks = current.getObstacles().query(range);
+					
+					for(GameObject block : foundBlocks) {
+						if(obj.getBounds().intersects(block.getBounds())) {
+							dynamicObjects.remove(obj);
+							System.out.println("REMOVED");
 						}
 					}
-					dynamicsUpdated = true;
 				}
+				dynamicsUpdated = true;
 			}
 		}
 	}
+	
 	
 	public void sendUpdate() {
 		if(players.size() > 0) {

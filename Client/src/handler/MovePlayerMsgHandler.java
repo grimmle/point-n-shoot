@@ -12,7 +12,7 @@ public class MovePlayerMsgHandler implements Handler<MovePlayerMsg> {
 
 	@Override
 	public void handle(MovePlayerMsg msg) {
-		if(Game.players != null && Game.staticMap != null) {
+		if(Game.players != null) {
 			if(Game.players.size() == msg.players.size()) {
 				for(int i = 0; i < msg.players.size(); i++) {
 					PlayerModel s = msg.players.get(i);

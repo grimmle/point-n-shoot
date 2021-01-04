@@ -23,12 +23,5 @@ public class MouseInput extends MouseAdapter {
 		dyn.id = Client.id;
 		dyn.content = b;
 		Client.sendObject(dyn);
-		
-//		for(int i = 0; i < handler.objects.size(); i++) {
-//			GameObject tempObject = handler.objects.get(i);
-//			if(tempObject.getId() == ID.Player) {
-//				handler.addObject(new Bullet(tempObject.getX()+15, tempObject.getY()+15, ID.Bullet, handler, mx, my, ((Player) tempObject).getBuff()));
-//			}
-//		}
 	}
 }
