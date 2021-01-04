@@ -16,6 +16,7 @@ public class World {
     	OS = new OpenSimplex2F(seed);
     }
 
+    //TODO: add actual cache functionality for clients
     static ConcurrentHashMap<CoordinatesKey, WorldTile> cache = new ConcurrentHashMap<CoordinatesKey, WorldTile>();
     static LRUCache lru = new LRUCache(9);
     

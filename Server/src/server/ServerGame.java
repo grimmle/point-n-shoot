@@ -150,7 +150,6 @@ public class ServerGame implements Runnable {
 	
 	public void updateAgent(PlayerModel p, long timer) {
 		if(p.agent != null) {
-			System.out.println(p.id + ": I got agentzzZZzZZ");
 			p.agent.setTarget(p.getX(), p.getY());
 			//p.agent.updateSurroundings() to pass lookahead to agent
 			p.agent.tick();
@@ -167,11 +166,10 @@ public class ServerGame implements Runnable {
 				}
 			}
 
+			//SHOOT AT CLOSEST ENEMY IF WITHIN 500px
 			if(closestPlayer[1] < 500) {
 				if(Math.round(timer/10)*10 % 500 == 0) {
-					//shoot at enemy
 					PlayerModel en = players.get(closestPlayer[0]);
-					//System.out.println(en.getX() + " " + en.getY());
 					dynamicObjects.add(new Bullet(p.agent.getX(), p.agent.getY(), en.getX(), en.getY(), 1, p.id, p.getColor()));
 				}
 			}

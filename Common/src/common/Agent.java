@@ -18,6 +18,8 @@ public class Agent extends GameObject {
 	private int maxdistance = 250;
 	private int mindistance = 30;
 	
+	private int MAX_SEE_AHEAD = 300;
+	
 	private Vector2D target;
 	
 	private Vector2D acceleration;
@@ -76,6 +78,16 @@ public class Agent extends GameObject {
 	public void applyForce(Vector2D force) {
 //		System.out.println("APPLY FORCE: " + force.x + " " + force.y);
 		acceleration.add(force);
+	}
+	
+	//TODO: collision avoidance
+	public Vector2D avoid() {
+		Vector2D ahead = Vector2D.add(location, velocity.getNormalized());
+		ahead.multiply(MAX_SEE_AHEAD);
+		
+		Vector2D aheadHalf = ahead.getMultiplied(0.5);
+		
+		return ahead;
 	}
 	
 	public Vector2D arrive(Vector2D target) {
