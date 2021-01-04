@@ -21,7 +21,6 @@ public class ServerGame implements Runnable {
 	private volatile boolean isRunning = false;
 	private Thread thread;
 	
-	public static ArrayList<GameObject> staticMap = new ArrayList<GameObject>();
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
 	public static ArrayList<PlayerModel> players = new ArrayList<PlayerModel>();
 	
@@ -182,6 +181,7 @@ public class ServerGame implements Runnable {
 	public void checkBulletCollision() {
 		for(GameObject obj : dynamicObjects) {
 			if(obj.getType() == TYPE.Bullet) {
+				
 				//REMOVE BULLET IF IT HAS TRAVELED A MAX TIME
 				if((System.currentTimeMillis() - ((Bullet)obj).timestamp) > 3000) {
 					dynamicObjects.remove(obj);

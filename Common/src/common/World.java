@@ -23,17 +23,17 @@ public class World {
         int tileX = playerX / TILE_SIZE;
         int tileY = playerY / TILE_SIZE;
         
-        if(getCache().get(new CoordinatesKey(tileX-1, tileY-1)) == null) generateTile(tileX-1, tileY-1);
-        if(getCache().get(new CoordinatesKey(tileX, tileY-1)) == null) generateTile(tileX, tileY-1);
+        if(cache.get(new CoordinatesKey(tileX-1, tileY-1)) == null) generateTile(tileX-1, tileY-1);
+        if(cache.get(new CoordinatesKey(tileX, tileY-1)) == null) generateTile(tileX, tileY-1);
         if(getCache().get(new CoordinatesKey(tileX+1, tileY-1)) == null) generateTile(tileX+1, tileY-1);
         
-        if(getCache().get(new CoordinatesKey(tileX-1, tileY)) == null) generateTile(tileX-1, tileY);
-        if(getCache().get(new CoordinatesKey(tileX, tileY)) == null) generateTile(tileX, tileY); // players current tile
-        if(getCache().get(new CoordinatesKey(tileX+1, tileY)) == null) generateTile(tileX+1, tileY);
+        if(cache.get(new CoordinatesKey(tileX-1, tileY)) == null) generateTile(tileX-1, tileY);
+        if(cache.get(new CoordinatesKey(tileX, tileY)) == null) generateTile(tileX, tileY); // players current tile
+        if(cache.get(new CoordinatesKey(tileX+1, tileY)) == null) generateTile(tileX+1, tileY);
         
-        if(getCache().get(new CoordinatesKey(tileX-1, tileY+1)) == null) generateTile(tileX-1, tileY+1);
-        if(getCache().get(new CoordinatesKey(tileX, tileY+1)) == null) generateTile(tileX, tileY+1);
-        if(getCache().get(new CoordinatesKey(tileX+1, tileY+1)) == null) generateTile(tileX+1, tileY+1);
+        if(cache.get(new CoordinatesKey(tileX-1, tileY+1)) == null) generateTile(tileX-1, tileY+1);
+        if(cache.get(new CoordinatesKey(tileX, tileY+1)) == null) generateTile(tileX, tileY+1);
+        if(cache.get(new CoordinatesKey(tileX+1, tileY+1)) == null) generateTile(tileX+1, tileY+1);
     }
 
     
