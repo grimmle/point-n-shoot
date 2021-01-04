@@ -20,7 +20,6 @@ public class Game extends Canvas implements Runnable {
 	private Thread thread;
 	private Camera camera;
 	
-	public static ArrayList<GameObject> staticMap = new ArrayList<GameObject>();
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
 	public static ArrayList<Player> players = new ArrayList<Player>();
 	
@@ -31,7 +30,7 @@ public class Game extends Canvas implements Runnable {
 		new Window(WIDTH, HEIGHT, "Game - Client " + Client.id, this);
 		
 		player = players.get(Client.id);
-		camera = new Camera(player.getX(), player.getY());
+		camera = new Camera(player.getX() - WIDTH/2, player.getY() - HEIGHT/2);
 		
 		this.addKeyListener(new KeyInput());
 		this.addMouseListener(new MouseInput(camera));
@@ -111,16 +110,13 @@ public class Game extends Canvas implements Runnable {
 		g.setColor(new Color(127, 127, 127));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 				
-		//// DRAW SHIT
+		//// DRAW STUFF
 		
 		g2d.translate(-camera.getX(), -camera.getY());
 		
 		
 		world.render(g);
 
-		for(GameObject obj : staticMap) {
-			obj.render(g);
-		}
 		for(GameObject obj : dynamicObjects) {
 			obj.render(g);
 		}
