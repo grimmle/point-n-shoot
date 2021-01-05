@@ -15,7 +15,7 @@ public class Bullet extends GameObject {
 
 	/*
 	 * x, y are center of player
-	 * mx, my where the player is clicking
+	 * mx, my where the player clicked
 	 * */
 	public Bullet(int x, int y, int mx, int my, float buff, int id, Color color) {
 		super(x, y, TYPE.Bullet);
@@ -35,8 +35,7 @@ public class Bullet extends GameObject {
 	}
 
 	@Override
-	public void tick() {
-	}
+	public void tick() {}
 
 	@Override
 	public void render(Graphics g) {
@@ -49,7 +48,10 @@ public class Bullet extends GameObject {
 
 	@Override
 	public Rectangle getBounds() {
-		return new Rectangle(x, y, size, size);
+		int offsetX = x-(size/2);
+		int offsetY = y-(size/2);
+		
+		return new Rectangle(offsetX, offsetY, size, size);
 	}
 
 }
