@@ -96,22 +96,19 @@ public class ServerGame implements Runnable {
 				playersUpdated = true;
 				
 				World.checkIfTilesInCache(newX, newY);
-		        ArrayList<GameObject> blocks = new ArrayList<GameObject>();
 		        WorldTile current = World.getTileAt(newX, newY);
-		        WorldTile left = World.getTileAt(newX-1, newY);
-		        WorldTile right = World.getTileAt(newX+1, newY);
-		        WorldTile up = World.getTileAt(newX, newY-1);
-		        WorldTile down = World.getTileAt(newX, newY+1);
-		        WorldTile[] surroundingTiles = { left, right, up, down };
+		        WorldTile left = World.getTileAt(newX-World.TILE_SIZE, newY);
+		        WorldTile right = World.getTileAt(newX+World.TILE_SIZE, newY);
+		        WorldTile up = World.getTileAt(newX, newY-World.TILE_SIZE);
+		        WorldTile down = World.getTileAt(newX, newY+World.TILE_SIZE);
+		        WorldTile[] tiles = { current, left, right, up, down };
 		        
 		        //CHECK COLLISION WITH BLOCKS WITHIN 300px
 		        Rectangle playerRange = new Rectangle(p.getX()-150, p.getY()-150, 300, 300);
 //		        Rectangle playerRange = current.getBounds();
-		        List<Block> foundBlocks = current.getObstacles().query(playerRange);
-		        
-		        blocks.addAll(current.getBlocks());
-		        for (WorldTile tile : surroundingTiles) {
-					blocks.addAll(tile.getBlocks());
+		        List<Block> foundBlocks = new ArrayList<Block>();
+		        for (WorldTile tile : tiles) {
+		        	foundBlocks.addAll(tile.getObstacles().query(playerRange));
 				}
 		        
 		        //CHECK COLLISION WITH WORLD BLOCKS
