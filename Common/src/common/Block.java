@@ -2,6 +2,8 @@ package common;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
 
 public class Block extends GameObject {
 
@@ -25,13 +27,28 @@ public class Block extends GameObject {
 	public void render(Graphics g) {
 		g.setColor(Color.black);
 		g.fillRect(x, y, size, size);
+		
+		//SHOW BOUNDING SHERE
+//		g.drawOval((int)getCenter().x - getOuterRadius(), (int)getCenter().y -  getOuterRadius(), getOuterRadius()*2, getOuterRadius()*2);
 //		g.drawRect(x, y, size, size);
-//		g.fillRect(x+size/2, y+size/2, 1, 1);
 	}
 
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, size, size);
+	}
+	
+	public Vector2D getCenter() {
+		return new Vector2D(x + World.BLOCK_SIZE/2, y + World.BLOCK_SIZE/2);
+	}
+	
+	public int getOuterRadius() {
+		return (int)((size) * Math.sqrt(2)) / 2;
+	}
+	
+	public Shape getBoundingsSphere() {
+		return new Ellipse2D.Double(getCenter().x - getOuterRadius(), getCenter().y -  getOuterRadius(), getOuterRadius()*2, getOuterRadius()*2);
+//		return (int)((size+4) * Math.sqrt(2)) / 2;
 	}
 
 }

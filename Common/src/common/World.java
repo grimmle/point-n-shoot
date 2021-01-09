@@ -26,7 +26,7 @@ public class World {
         
         if(cache.get(new CoordinatesKey(tileX-1, tileY-1)) == null) generateTile(tileX-1, tileY-1);
         if(cache.get(new CoordinatesKey(tileX, tileY-1)) == null) generateTile(tileX, tileY-1);
-        if(getCache().get(new CoordinatesKey(tileX+1, tileY-1)) == null) generateTile(tileX+1, tileY-1);
+        if(cache.get(new CoordinatesKey(tileX+1, tileY-1)) == null) generateTile(tileX+1, tileY-1);
         
         if(cache.get(new CoordinatesKey(tileX-1, tileY)) == null) generateTile(tileX-1, tileY);
         if(cache.get(new CoordinatesKey(tileX, tileY)) == null) generateTile(tileX, tileY); // players current tile
@@ -47,7 +47,7 @@ public class World {
 			float xoff = tileX + 0.0f;
 			for(int x = 0; x < BLOCKS_AMOUNT; x++) {
 				double out = Helper.map(OS.noise2(xoff, yoff), -1, 1, 0, 255);
-				tile.z[x][y] = out > 150 ? 255 : 0;
+				tile.z[x][y] = out > 185 ? 255 : 0;
 				if(tile.z[x][y] == 255) {
 					tile.obstacles.insert(new Block(tileX*TILE_SIZE + x*BLOCK_SIZE, tileY*TILE_SIZE + y*BLOCK_SIZE, BLOCK_SIZE));
 				}

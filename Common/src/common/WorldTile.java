@@ -30,7 +30,6 @@ public class WorldTile {
     
     
     void render(Graphics g) {
-    	
     	Rectangle range = new Rectangle(x*World.TILE_SIZE, y*World.TILE_SIZE, World.TILE_SIZE, World.TILE_SIZE);
     	blocks = obstacles.query(range);
     	for(Block b : blocks) {
