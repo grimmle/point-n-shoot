@@ -105,7 +105,7 @@ public class ServerGame implements Runnable {
 		        
 		        //CHECK COLLISION WITH BLOCKS WITHIN 300px
 		        Rectangle playerRange = new Rectangle(p.getX()-150, p.getY()-150, 300, 300);
-//		        Rectangle playerRange = current.getBounds();
+		        //Rectangle playerRange = current.getBounds();
 		        List<Block> foundBlocks = new ArrayList<Block>();
 		        for (WorldTile tile : tiles) {
 		        	foundBlocks.addAll(tile.getObstacles().query(playerRange));

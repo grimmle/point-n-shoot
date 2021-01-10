@@ -13,8 +13,6 @@ public class WorldTile {
 	public int x, y;
     long lastUsed;
     public double z[][];
-    Random rand = new Random();
-    Color randomColor;
     
     public Pickup pickup;
     List<Block> blocks = new ArrayList<Block>();
@@ -24,7 +22,6 @@ public class WorldTile {
     	this.x = x;
     	this.y = y;
     	this.lastUsed = new Date().getTime();
-    	randomColor = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
     	obstacles = new QuadTree(new Rectangle(x*World.TILE_SIZE, y*World.TILE_SIZE, World.TILE_SIZE, World.TILE_SIZE));
     }
     

@@ -14,13 +14,16 @@ public class Agent extends GameObject {
 	private Color color;
 	
 	private double MAX_SPEED = 8;
-	private double MAX_FORCE = 0.5;
+	private double MAX_STEER_FORCE = 0.5;
 	
-	private int MAX_DISTANCE = 500;
+	private int MAX_DISTANCE = 400;
 	private int MIN_DISTANCE = 30;
 	
-	private int MAX_SEE_AHEAD = 200;
-	private double MAX_AVOID_FORCE = 1.8;
+	private int STEER_WEIGHT = 1;
+	private int AVOID_WEIGHT = 3;
+	
+	private int MAX_SEE_AHEAD = 330;
+	private double MAX_AVOID_FORCE = 2;
 	
 	private Vector2D target;
 	
@@ -51,12 +54,11 @@ public class Agent extends GameObject {
 	public void tick() {
 		//seek()
 		steer = arrive(target);
-		
+		avoid = avoid();
 		//force()
-		applyForce(steer);
+		applyForce(steer, avoid);
 		//update()
 		location.add(velocity);
-//		System.out.println("agent location: " + location.x + " " + location.y);
 		velocity.add(acceleration);
 		//clear acceleration
 		acceleration.multiply(0);
@@ -92,27 +94,14 @@ public class Agent extends GameObject {
 //		g.drawLine((int)location.x, (int)location.y, (int)a.x, (int)a.y);
 	}
 
-	@Override
-	public Rectangle getBounds() {
-		int offsetX = (int)location.x-(size/2);
-		int offsetY = (int)location.y-(size/2);
-		
-		return new Rectangle(offsetX, offsetY, size, size);
-	}
 	
-	public void setTarget(int x, int y) {
-		target.set(x, y);
-	}
-	
-	public void setLocation(Vector2D loc) {
-		location.set(loc);
-	}
-	
-	public Vector2D getLocation() {
-		return location;
-	}
-	
-	public void applyForce(Vector2D force) {
+	public void applyForce(Vector2D steer, Vector2D avoid) {
+		//Gewicht1 = 0 falls Abstand B,K < ..., sonst Gewicht1 = Abstand
+		//Gewicht2 = ∞ falls Abstand H,K < ..., sonst Gewicht2 = 1 / Abstand
+		System.out.println(steer.x + " " + steer.y);
+		System.out.println(avoid.x + " " + avoid.y);
+		Vector2D force = steer.getAdded(avoid);
+		System.out.println(force.x + " " + force.y);
 		acceleration.add(force);
 	}
 	
@@ -121,18 +110,23 @@ public class Agent extends GameObject {
 		double d = desired.getLength();
 		double speed = MAX_SPEED;
 		
+		double steer_force = MAX_STEER_FORCE;
+		
 		if(d <= MIN_DISTANCE) {
 			speed = 0;
 		} else if(d < MAX_DISTANCE) {
 			speed = Helper.map(d, 0, MAX_DISTANCE, 0, MAX_SPEED);
+			steer_force = d;
 		}
 		desired.normalize();
 		desired.multiply(speed);
 		
-		
 		Vector2D steer = Vector2D.subtract(desired, velocity);
-		avoid = avoid();
-		steer.add(avoid);
+		
+//		if(steer.getLength() != 0.0) steer.normalize();
+//		steer.multiply(steer_force);
+//		avoid = avoid();
+//		steer.add(avoid);
 		
 		return steer;
 	}
@@ -147,25 +141,6 @@ public class Agent extends GameObject {
 //		return steer;
 //	}
 	
-	public Vector2D getAcceleration() {
-		return acceleration;
-	}
-	
-	@Override
-	public int getX() {
-		return (int)location.x;
-	}
-	
-	@Override
-	public int getY() {
-		return (int)location.y;
-	}
-
-	public void updateSurroundings(List<Block> surroundingBlocks) {
-		surroundings = surroundingBlocks;
-	}
-	
-	//TODO: collision avoidance
 	public Vector2D avoid() {
 		Vector2D vel = velocity.getLength() != 0.0 ? velocity.getNormalized() : velocity;
 		ahead = vel.getMultiplied(MAX_SEE_AHEAD);
@@ -178,26 +153,28 @@ public class Agent extends GameObject {
 		
 		ahead.add(location);
 		ahead2.add(location);
-		ahead3.add(location);
-//		System.out.println("----------------");
-//		System.out.println(vel.x + " " + vel.y);
-//		System.out.println(ahead.x + " " + ahead.y);
-		
-		
+		ahead3.add(location);		
 		
 		Block mostThreatening = findMostThreateningObstacle(ahead, ahead2, ahead3);
 	    Vector2D avoidance = new Vector2D(0, 0);
-	 
+	    
+	    double avoid_force = MAX_AVOID_FORCE;
+	    
 	    if (mostThreatening != null) {
-	        avoidance = Vector2D.subtract(ahead, mostThreatening.getCenter());
+	        avoidance.x = ahead3.x - mostThreatening.getCenter().x;
+	        avoidance.y = ahead3.y - mostThreatening.getCenter().y;
 	        
+	        double d = distance(location, mostThreatening.getCenter());
+		    if(d < MAX_DISTANCE) {
+		    	avoid_force = MAX_AVOID_FORCE / d;
+		    	avoid_force *= 75;
+		    }
 	        avoidance.normalize();
-	        avoidance.multiply(MAX_AVOID_FORCE);
+	        avoidance.multiply(avoid_force);
 	    } else {
 	        avoidance.multiply(0);
 	    }
-//	    System.out.println(mostThreatening);
-//	    System.out.println("AVOID: " + avoidance.x + " " + avoidance.y);
+	    
 		return avoidance;
 	}
 	
@@ -226,6 +203,44 @@ public class Agent extends GameObject {
 	
 	private double distance(Vector2D a, Vector2D b) {
 	    return Math.sqrt((a.x - b.x) * (a.x - b.x)  + (a.y - b.y) * (a.y - b.y));
+	}
+	
+	@Override
+	public Rectangle getBounds() {
+		int offsetX = (int)location.x-(size/2);
+		int offsetY = (int)location.y-(size/2);
+		
+		return new Rectangle(offsetX, offsetY, size, size);
+	}
+	
+	public void setTarget(int x, int y) {
+		target.set(x, y);
+	}
+	
+	public void setLocation(Vector2D loc) {
+		location.set(loc);
+	}
+	
+	public Vector2D getLocation() {
+		return location;
+	}
+	
+	public Vector2D getAcceleration() {
+		return acceleration;
+	}
+	
+	@Override
+	public int getX() {
+		return (int)location.x;
+	}
+	
+	@Override
+	public int getY() {
+		return (int)location.y;
+	}
+
+	public void updateSurroundings(List<Block> surroundingBlocks) {
+		surroundings = surroundingBlocks;
 	}
 
 }

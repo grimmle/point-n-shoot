@@ -38,6 +38,10 @@ public class Block extends GameObject {
 		return new Rectangle(x, y, size, size);
 	}
 	
+	public Shape getBoundingsSphere() {
+		return new Ellipse2D.Double(getCenter().x - getOuterRadius(), getCenter().y -  getOuterRadius(), getOuterRadius()*2, getOuterRadius()*2);
+	}
+	
 	public Vector2D getCenter() {
 		return new Vector2D(x + World.BLOCK_SIZE/2, y + World.BLOCK_SIZE/2);
 	}
@@ -45,10 +49,4 @@ public class Block extends GameObject {
 	public int getOuterRadius() {
 		return (int)((size) * Math.sqrt(2)) / 2;
 	}
-	
-	public Shape getBoundingsSphere() {
-		return new Ellipse2D.Double(getCenter().x - getOuterRadius(), getCenter().y -  getOuterRadius(), getOuterRadius()*2, getOuterRadius()*2);
-//		return (int)((size+4) * Math.sqrt(2)) / 2;
-	}
-
 }
