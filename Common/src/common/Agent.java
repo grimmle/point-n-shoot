@@ -15,14 +15,14 @@ public class Agent extends GameObject {
 	
 	public final int queryRange = 500;
 	
-	private final double MAX_SPEED = 8;
+	private final double MAX_SPEED = 10;
 	private final double MAX_STEER_FORCE = 0.5;
 	
 	private final int MAX_DISTANCE = 350;
 	private final int MIN_DISTANCE = 30;
 	
 	private final int MAX_SEE_AHEAD = 220;
-	private final double MAX_AVOID_FORCE = 2.5;
+	private final double MAX_AVOID_FORCE = 2.2;
 	
 	private Vector2D target;
 	private Vector2D acceleration;
@@ -39,6 +39,9 @@ public class Agent extends GameObject {
 	
 	Vector2D rotated3 = new Vector2D(0, 0);
 	Vector2D rotated4 = new Vector2D(0, 0);
+	
+	Vector2D rotated5 = new Vector2D(0, 0);
+	Vector2D rotated6 = new Vector2D(0, 0);
 	
 	Vector2D avoid = new Vector2D(0, 0);
 	Vector2D steer = new Vector2D(0, 0);
@@ -82,18 +85,19 @@ public class Agent extends GameObject {
 			//SHOW AHEAD VECTORS
 			g.setColor(Color.red);
 			g.drawLine((int)location.x, (int)location.y, (int)ahead.x, (int)ahead.y);
-			g.setColor(Color.green);
 			g.drawLine((int)location.x, (int)location.y, (int)rotated1.x, (int)rotated1.y);
 			g.drawLine((int)location.x, (int)location.y, (int)rotated2.x, (int)rotated2.y);
 			g.drawLine((int)location.x, (int)location.y, (int)rotated3.x, (int)rotated3.y);
 			g.drawLine((int)location.x, (int)location.y, (int)rotated4.x, (int)rotated4.y);
-			
+			g.drawLine((int)location.x, (int)location.y, (int)rotated5.x, (int)rotated5.y);
+			g.drawLine((int)location.x, (int)location.y, (int)rotated6.x, (int)rotated6.y);
+			g.setColor(Color.green);
 			g.drawLine((int)location.x, (int)location.y, (int)ahead2.x, (int)ahead2.y);
 			g.setColor(Color.blue);
 			g.drawLine((int)location.x, (int)location.y, (int)ahead3.x, (int)ahead3.y);
 			
 			//SHOW QT QUERY RANGE
-			g.drawRect((int)location.x-queryRange/2, (int)location.y-queryRange/2, queryRange, queryRange);
+//			g.drawRect((int)location.x-queryRange/2, (int)location.y-queryRange/2, queryRange, queryRange);
 			
 			//SHOW STEERING VECTOR
 	//		g.setColor(Color.magenta);
@@ -101,7 +105,7 @@ public class Agent extends GameObject {
 	//		System.out.println("STEER: " + s.x + " " + s.y);
 	//		g.drawLine((int)location.x, (int)location.y, (int)s.x, (int)s.y);
 			
-			//SHOW AVOIDANCE VECTOR
+			//SHOW AVOIDANCE VECTOR, MULITPLIED BY 100 FOR BETTER VISIBILITY
 			g.setColor(Color.orange);
 			Vector2D ax = avoid.getMultiplied(100);
 			Vector2D a = location.getAdded(ax);
@@ -134,41 +138,37 @@ public class Agent extends GameObject {
 		Vector2D steer = Vector2D.subtract(desired, velocity);
 		return steer;
 	}
-	
-//	public Vector2D seek(Vector2D target) {
-//		Vector2D desired = Vector2D.subtract(target, location);
-//		desired.normalize();
-//		desired.multiply(MAX_SPEED);
-//		
-//		Vector2D steer = Vector2D.subtract(desired, velocity);
-//		
-//		return steer;
-//	}
+
 	
 	public Vector2D avoid() {
 		Vector2D vel = velocity;
 		double dynamic_length = velocity.getLength();
 		if(dynamic_length != 0.0) {
 			vel = velocity.getNormalized();
-			ahead.multiply(dynamic_length);
+			ahead = vel.getMultiplied(MAX_SEE_AHEAD);
+			ahead.multiply(dynamic_length / (MAX_SPEED/2));
+		} else {			
+			ahead = vel.getMultiplied(MAX_SEE_AHEAD);
 		}
-		ahead = vel.getMultiplied(MAX_SEE_AHEAD);
 		
 		// COLLISION FEELERS
-		rotated1 = rotateVectorBy(ahead, 25);
-		rotated2 = rotateVectorBy(ahead, -25);
+		rotated1 = rotateVectorBy(ahead, 20);
+		rotated2 = rotateVectorBy(ahead, -20);
 		rotated3 = rotateVectorBy(ahead, 75);
 		rotated4 = rotateVectorBy(ahead, -75);
+		rotated5 = rotateVectorBy(ahead, 40);
+		rotated6 = rotateVectorBy(ahead, -40);
 		
-		rotated1.multiply(0.5);
-		rotated2.multiply(0.5);
-		rotated3.multiply(0.2);
-		rotated4.multiply(0.2);
+		rotated1.multiply(0.6);
+		rotated2.multiply(0.6);
+		rotated3.multiply(0.15);
+		rotated4.multiply(0.15);
+		rotated5.multiply(0.25);
+		rotated6.multiply(0.25);
 		
 		ahead2 = ahead.getMultiplied(0.5);
 		ahead3 = ahead.getMultiplied(0.25);
 		ahead4 = ahead.getMultiplied(0.1);
-		
 		ahead.add(location);
 		ahead2.add(location);
 		ahead3.add(location);
@@ -178,6 +178,8 @@ public class Agent extends GameObject {
 		rotated2.add(location);
 		rotated3.add(location);
 		rotated4.add(location);
+		rotated5.add(location);
+		rotated6.add(location);
 		
 		Block mostThreatening = findMostThreateningObstacle();
 	    Vector2D avoidance = new Vector2D(0, 0);
@@ -231,6 +233,8 @@ public class Agent extends GameObject {
 				|| distance(obstacle.getCenter(), rotated2) <= obstacle.getOuterRadius()
 				|| distance(obstacle.getCenter(), rotated3) <= obstacle.getOuterRadius()
 				|| distance(obstacle.getCenter(), rotated4) <= obstacle.getOuterRadius()
+				|| distance(obstacle.getCenter(), rotated5) <= obstacle.getOuterRadius()
+				|| distance(obstacle.getCenter(), rotated6) <= obstacle.getOuterRadius()
 				|| obstacle.getBoundingsSphere().intersects(getBounds());
 	}
 	
