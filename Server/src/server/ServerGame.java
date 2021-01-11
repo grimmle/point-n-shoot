@@ -148,10 +148,9 @@ public class ServerGame implements Runnable {
 	public void updateAgent(PlayerModel p, long timer) {
 		if(p.agent != null) {
 			p.agent.setTarget(p.getX(), p.getY());
-			//p.agent.updateSurroundings() to pass lookahead to agent
 			int x = p.agent.getX();
 			int y = p.agent.getY();
-//			System.out.println("agent " + x + " " + y);
+			
 			World.checkIfTilesInCache(x, y);
 	        WorldTile current = World.getTileAt(x, y);
 	        WorldTile left = World.getTileAt(x-World.TILE_SIZE, y);
@@ -160,8 +159,8 @@ public class ServerGame implements Runnable {
 	        WorldTile down = World.getTileAt(x, y+World.TILE_SIZE);
 	        
 	        WorldTile[] tiles = { current, left, right, up, down };
-	        int fullRange = 600;
-			Rectangle range = new Rectangle(x-fullRange/2, y-fullRange/2, fullRange, fullRange);
+	        int r = p.agent.queryRange;
+			Rectangle range = new Rectangle(x-r/2, y-r/2, r, r);
 			List<Block> foundBlocks = new ArrayList<Block>();
 			for(WorldTile tile : tiles) {
 				foundBlocks.addAll(tile.getObstacles().query(range));
