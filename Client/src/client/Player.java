@@ -28,12 +28,7 @@ public class Player extends GameObject {
 
 	@Override
 	public void tick() {
-		
-//		if(getAgent() != null) {
-//			getAgent().setTarget(x, y);
-//			agent.tick();
-//		}
-		
+
 		//player movement
 		float tempX = velX;
 		float tempY = velY;
