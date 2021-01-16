@@ -10,31 +10,36 @@ public class Pickup extends GameObject {
 
 	private static final long serialVersionUID = -198770244994707947L;
 	private double angle = 0;
+	private String effect;
+	private Color color = Color.white;
 
-	public Pickup(int x, int y) {
+	public Pickup(int x, int y, String effect) {
 		super(x, y, TYPE.Pickup);
+		this.effect = effect;
+		if(effect == "agent") color = Color.ORANGE;
+		if(effect == "health") color = Color.GREEN;
 	}
 
 	@Override
-	public void tick() {
-		
-	}
+	public void tick() {}
 
 	@Override
 	public void render(Graphics g) {
 //		angle += 0.001;
 //		Graphics2D g2d = (Graphics2D) g.create();
 //		AffineTransform old = g2d.getTransform();
-//        g2d.rotate(angle, x+12, y+12);           
+//      g2d.rotate(angle, x+12, y+12);           
         //draw stuff or render images it works both
-		g.setColor(Color.white);
+		g.setColor(color);
 		g.fillRect(x, y, 24, 24);
-        
-//        g2d.setTransform(old);
 	}
 
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, 24, 24);
+	}
+	
+	public String getEffect() {
+		return effect;
 	}
 }

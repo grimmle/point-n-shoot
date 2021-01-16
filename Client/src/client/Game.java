@@ -16,8 +16,8 @@ public class Game extends Canvas implements Runnable {
 	public final static int WIDTH = 800;
 	public final static int HEIGHT = 600;
 	
-	private volatile boolean isRunning = false;
-	private Thread thread;
+	private volatile static boolean isRunning = false;
+	private static Thread thread;
 	private Camera camera;
 	
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
@@ -26,8 +26,11 @@ public class Game extends Canvas implements Runnable {
 	static Player player;
 	private World world;
 	
+	private Window w;
+	
 	public Game(long seed) {
-		new Window(WIDTH, HEIGHT, "Game - Client " + Client.id, this);
+		w = new Window(WIDTH, HEIGHT, "Game - Client " + Client.id, this);
+
 		
 		player = players.get(Client.id);
 		camera = new Camera(player.getX() - WIDTH/2, player.getY() - HEIGHT/2);
@@ -50,8 +53,10 @@ public class Game extends Canvas implements Runnable {
 		thread.start();
 	}
 
-	private void stop() {
+	public static void stop() {
 		isRunning = false;
+		Client.close();
+		System.out.println("Game stop");
 		try {
 			thread.join();
 		} catch(InterruptedException e) {
@@ -124,7 +129,7 @@ public class Game extends Canvas implements Runnable {
 			player.render(g);
 		}
 		
-//		g2d.drawString("HEALTH: " + players.get(Client.id).getHealth(), 10, 10);
+//		g.drawString("HEALTH: " + players.get(Client.id).getHealth(), 100, 100);
 		
 		g2d.translate(camera.getX(), camera.getY());
 		

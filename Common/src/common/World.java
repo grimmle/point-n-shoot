@@ -42,6 +42,7 @@ public class World {
     	WorldTile tile = new WorldTile(tileX, tileY);
     	tile.z = new double[BLOCKS_AMOUNT][BLOCKS_AMOUNT];
     	
+    	//GENERATE BLOCKS FROM NOISE
     	float yoff = tileY + 0.0f;
 		for(int y = 0; y < BLOCKS_AMOUNT; y++) {
 			float xoff = tileX + 0.0f;
@@ -56,19 +57,25 @@ public class World {
 			yoff += 0.1;
 		}
 		
-		//generate pickup
-		//TODO: think of a better way
-		int tries = 0;
-		while(tries < 25) {
-			int min = 0;
-		    int max = BLOCKS_AMOUNT;
-		    int xValue = (int) (min + Math.random() * (max - min));
-		    int yValue = (int) (min + Math.random() * (max - min));
-		    if(tile.z[xValue][yValue] == 0) {
-		    	tile.pickup = new Pickup(tileX*TILE_SIZE + xValue*BLOCK_SIZE, tileY*TILE_SIZE + yValue*BLOCK_SIZE);
-		    	break;
-		    }
-		    tries++;
+		//GENERATE PICKUP
+		//TODO: think of a better way (dynamic events)
+		if(Math.random() > 0.5) {
+			double rnd = Math.random();
+			String effect;
+			if(rnd < 0.15) effect = "agent";
+			else if(rnd > 0.85) effect = "health";
+			else effect = "buff";
+			
+			for(int i = 0; i < 5; i++) {
+				int min = 0;
+			    int max = BLOCKS_AMOUNT;
+			    int xValue = (int) (min + Math.random() * (max - min));
+			    int yValue = (int) (min + Math.random() * (max - min));
+			    if(tile.z[xValue][yValue] == 0) {
+			    	tile.pickup = new Pickup(tileX*TILE_SIZE + xValue*BLOCK_SIZE, tileY*TILE_SIZE + yValue*BLOCK_SIZE, effect);
+			    	break;
+			    }
+			}
 		}
 		cache.put(new CoordinatesKey(tileX, tileY), tile);
     }

@@ -18,7 +18,7 @@ public class MouseInput extends MouseAdapter {
 		int my = (int) (e.getY() + camera.getY());
 		
 		Player p = Game.players.get(Client.id);
-		Bullet b = new Bullet(p.getX(), p.getY(), mx, my, ((Player) p).getBuff(), p.id, p.getColor());
+		Bullet b = new Bullet(p.getX(), p.getY(), mx, my, ((Player) p).getBuff(), p.id, p.getColor(), 10);
 		DynamicObjectsUpdateMsg dyn = new DynamicObjectsUpdateMsg();
 		dyn.id = Client.id;
 		dyn.content = b;

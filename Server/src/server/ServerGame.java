@@ -131,9 +131,15 @@ public class ServerGame implements Runnable {
 							System.out.println("PICKUP");
 							hit = tile.pickup;
 							dynamicsUpdated = true;
-							if(p.getBuff() < 5) p.addBuff(0.5f);
+							
+							if(tile.pickup.getEffect() == "buff") {								
+								if(p.getBuff() <= 5) p.addBuff(0.5f);
+							} else if(tile.pickup.getEffect() == "agent") {								
+								if(p.agent == null) p.setAgent(new Agent(p.getX(), p.getY(), p.getColor()));
+							} else if(tile.pickup.getEffect() == "health") {								
+								if(p.getHealth() <= 150) p.setHealth(p.getHealth() + 10);
+							}
 							tile.pickup = null;
-							if(p.agent == null) p.setAgent(new Agent(p.getX(), p.getY(), p.getColor()));
 						}
 					}
 					if(hit != null) dynamicObjects.remove(hit);
@@ -185,7 +191,7 @@ public class ServerGame implements Runnable {
 			if(closestPlayer[1] < 500) {
 				if(Math.round(timer/10)*10 % 500 == 0) {
 					PlayerModel en = players.get(closestPlayer[0]);
-					dynamicObjects.add(new Bullet(p.agent.getX(), p.agent.getY(), en.getX(), en.getY(), 1, p.id, p.getColor()));
+					dynamicObjects.add(new Bullet(p.agent.getX(), p.agent.getY(), en.getX(), en.getY(), 1, p.id, p.getColor(), 5));
 				}
 			}
 		}
@@ -214,12 +220,12 @@ public class ServerGame implements Runnable {
 							if(current.x == player.x && current.y == player.y) {
 								if(p.getBounds().intersects(obj.getBounds())) {
 									//int damage = (int) players.get(((Bullet)obj).id).getBuff() * 10;
-									int damage = 10;
+									int damage = ((Bullet) obj).getDamage();
 									p.setHealth(p.getHealth() - damage);
 									if(p.getHealth() <= 0) {
 										System.out.println("KILLED");
-										p.setX(100000);
-										p.setY(100000);
+										p.setX(100050);
+										p.setY(100050);
 										p.setHealth(100);
 									}
 									playersUpdated = true;

@@ -158,7 +158,6 @@ public class Agent extends GameObject {
 		rotated4 = rotateVectorBy(ahead, -75);
 		rotated5 = rotateVectorBy(ahead, 40);
 		rotated6 = rotateVectorBy(ahead, -40);
-		
 		rotated1.multiply(0.6);
 		rotated2.multiply(0.6);
 		rotated3.multiply(0.15);
@@ -169,11 +168,11 @@ public class Agent extends GameObject {
 		ahead2 = ahead.getMultiplied(0.5);
 		ahead3 = ahead.getMultiplied(0.25);
 		ahead4 = ahead.getMultiplied(0.1);
+		
 		ahead.add(location);
 		ahead2.add(location);
 		ahead3.add(location);
 		ahead4.add(location);
-		
 		rotated1.add(location);
 		rotated2.add(location);
 		rotated3.add(location);
@@ -187,7 +186,6 @@ public class Agent extends GameObject {
 	    double avoid_force = MAX_AVOID_FORCE;
 	    
 	    if (mostThreatening != null) {
-	    	//ahead2 maybe
 	        avoidance.x = ahead4.x - mostThreatening.getCenter().x;
 	        avoidance.y = ahead4.y - mostThreatening.getCenter().y;
 	        

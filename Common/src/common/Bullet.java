@@ -12,17 +12,19 @@ public class Bullet extends GameObject {
 	private int size;
 	private Color color;
 	public long timestamp;
+	private int dmg = 10;
 
 	/*
 	 * x, y are center of player
 	 * mx, my where the player clicked
 	 * */
-	public Bullet(int x, int y, int mx, int my, float buff, int id, Color color) {
+	public Bullet(int x, int y, int mx, int my, float buff, int id, Color color, int dmg) {
 		super(x, y, TYPE.Bullet);
 		this.id = id;
 		this.size = (int) (8*buff);
 		this.color = color;
 		this.timestamp = new Date().getTime();
+		this.dmg = dmg;
 		
 		int fromX = (int) (x-(buff/2));
 		int fromY = (int) (y-(buff/2));
@@ -52,6 +54,10 @@ public class Bullet extends GameObject {
 		int offsetY = y-(size/2);
 		
 		return new Rectangle(offsetX, offsetY, size, size);
+	}
+	
+	public int getDamage() {
+		return dmg;
 	}
 
 }

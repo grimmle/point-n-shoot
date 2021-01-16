@@ -108,4 +108,8 @@ public class PlayerModel extends GameObject {
 		this.agent = agent;
 	}
 
+	public void setColor(Color c) {
+		color = c;
+	}
+
 }

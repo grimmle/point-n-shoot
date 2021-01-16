@@ -12,14 +12,23 @@ public class AddConnectionHandler implements ServerHandler<AddConnectionMsg> {
 	@Override
 	public void handle(AddConnectionMsg msg, Connection c) {
 		Random rand = new Random();
-		Color randomColor = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
-		PlayerModel p = new PlayerModel(100000, 100000, c.id, randomColor);
+		
+		float[] hsb =  new float[] { 0f, 1f, 0.5f };
+		hsb = Color.RGBtoHSB(rand.nextInt(), rand.nextInt(), rand.nextInt(), hsb);
+//		hsb[1] = 1f;
+//		hsb[2] = 1f;
+		int rgb = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+		int red = (rgb>>16)&0xFF;
+		int green = (rgb>>8)&0xFF;
+		int blue = rgb&0xFF;
+		Color color = new Color(red, green, blue);
+		PlayerModel p = new PlayerModel(100050, 100050, c.id, color);
 		ServerGame.players.add(p);
 		
 		World.checkIfTilesInCache(p.getX(), p.getY());
 		
 		System.out.println("Player " + c.id + " joined the Game!");
-		System.out.println("players on server " + ServerGame.players);
+//		System.out.println("players on server " + ServerGame.players);
 		
 		Server.connections.forEach((i, connection) -> {
 			AddConnectionMsg m = new AddConnectionMsg();
@@ -29,7 +38,6 @@ public class AddConnectionHandler implements ServerHandler<AddConnectionMsg> {
 			System.out.println(m.players.size() + " send to " + connection.id);
 			connection.sendObject(m);
 		});
-		
 	}
 
 	@Override
