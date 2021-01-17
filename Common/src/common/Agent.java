@@ -15,13 +15,13 @@ public class Agent extends GameObject {
 	
 	public final int queryRange = 500;
 	
-	private final double MAX_SPEED = 8;
+	private final double MAX_SPEED = 10;
 	private final double MAX_STEER_FORCE = 0.5;
 	
 	private final int MAX_DISTANCE = 350;
 	private final int MIN_DISTANCE = 30;
 	
-	private final int MAX_SEE_AHEAD = 200;
+	private final int MAX_SEE_AHEAD = 220;
 	private final double MAX_AVOID_FORCE = 2.5;
 	
 	private Vector2D target;
@@ -45,7 +45,7 @@ public class Agent extends GameObject {
 	
 	private transient List<Block> surroundings; 
 
-	private boolean showVectors = true;
+	private boolean showVectors = false;
 
 	public Agent(int x, int y, Color color) {
 		super(x, y, TYPE.Agent);
@@ -176,8 +176,7 @@ public class Agent extends GameObject {
 	    double avoid_force = MAX_AVOID_FORCE;
 	    
 	    if (mostThreatening != null) {
-	        avoidance.x = ahead4.x - mostThreatening.getCenter().x;
-	        avoidance.y = ahead4.y - mostThreatening.getCenter().y;
+	    	avoidance = ahead3.getSubtracted(mostThreatening.getCenter());
 	        
 	        double d = distance(location, mostThreatening.getCenter());
 		    if(d < MAX_DISTANCE) {

@@ -24,7 +24,7 @@ public class ServerGame implements Runnable {
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
 	public static ArrayList<PlayerModel> players = new ArrayList<PlayerModel>();
 	
-	public final static long SEED = 1234;
+	public final static long SEED = 42069;
 	World world;
 	
 	public boolean playersUpdated = false;
