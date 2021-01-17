@@ -1,5 +1,7 @@
 package handler;
 
+import java.util.Map.Entry;
+
 import client.Client;
 import client.Game;
 import client.Player;
@@ -13,11 +15,17 @@ public class MovePlayerMsgHandler implements Handler<MovePlayerMsg> {
 	@Override
 	public void handle(MovePlayerMsg msg) {
 		if(Game.players != null) {
+			if(Game.players.size() != msg.players.size()) {
+				Game.players.clear();
+				for (Entry<Integer, PlayerModel> entry : msg.players.entrySet()) {
+					PlayerModel player = entry.getValue();
+					Game.players.put(player.id, new Player(player.getX(), player.getY(), player.id, player.getColor()));
+				}
+			}
 			if(Game.players.size() == msg.players.size()) {
-				for(int i = 0; i < msg.players.size(); i++) {
-					PlayerModel s = msg.players.get(i);
-					Player p = Game.players.get(i);
-					//System.out.println("Player " + p.id + " moved: " + p.getX() + " " + p.getY());
+				for (Entry<Integer, PlayerModel> entry : msg.players.entrySet()) {
+					PlayerModel s = entry.getValue();
+					Player p = Game.players.get(s.id);
 
 					int tileX = p.getX() / World.TILE_SIZE;
 			        int tileY = p.getY() / World.TILE_SIZE;
@@ -31,12 +39,8 @@ public class MovePlayerMsgHandler implements Handler<MovePlayerMsg> {
 						}
 					}
 					p.setBuff(s.getBuff());
-					if(p.getHealth() != s.getHealth()) System.out.println(p.id + " " + s.getHealth());
 					p.setHealth(s.getHealth());
-					
-					Agent a = s.getAgent();
-					if(a != null)
-						p.setAgent(a);
+					p.setAgent(s.getAgent());
 				}
 			}
 		}

@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import common.*;
@@ -21,7 +23,7 @@ public class Game extends Canvas implements Runnable {
 	private Camera camera;
 	
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
-	public static ArrayList<Player> players = new ArrayList<Player>();
+	public static ConcurrentHashMap<Integer,Player> players = new ConcurrentHashMap<Integer,Player>();
 	
 	static Player player;
 	private World world;
@@ -119,10 +121,11 @@ public class Game extends Canvas implements Runnable {
 		
 		world.render(g);
 
-		for(GameObject obj : dynamicObjects) {
+		for (GameObject obj : dynamicObjects) {
 			obj.render(g);
 		}
-		for(GameObject player : players) {
+		for (Entry<Integer, Player> entry : players.entrySet()) {
+			Player player = entry.getValue();
 			player.render(g);
 		}
 		

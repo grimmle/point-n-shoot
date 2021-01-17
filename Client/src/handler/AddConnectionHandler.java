@@ -1,5 +1,7 @@
 package handler;
 
+import java.util.Map.Entry;
+
 import client.*;
 import common.PlayerModel;
 import messages.AddConnectionMsg;
@@ -12,8 +14,9 @@ public class AddConnectionHandler implements Handler<AddConnectionMsg> {
 		
 		if(msg.players.size() != Game.players.size()) {
 			Game.players.clear();
-			for(PlayerModel player : msg.players) {
-				Game.players.add(new Player(player.getX(), player.getY(), player.id, player.getColor()));
+			for (Entry<Integer, PlayerModel> entry : msg.players.entrySet()) {
+				PlayerModel player = entry.getValue();
+				Game.players.put(player.id, new Player(player.getX(), player.getY(), player.id, player.getColor()));
 			}
 		}
 		

@@ -1,6 +1,7 @@
 package messages;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import common.Msg;
@@ -14,5 +15,5 @@ public class MovePlayerMsg implements Msg {
 	public float velY;
 	public int x;
 	public int y;
-	public ArrayList<PlayerModel> players;
+	public ConcurrentHashMap<Integer, PlayerModel> players;
 }

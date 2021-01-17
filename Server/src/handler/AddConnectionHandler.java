@@ -23,7 +23,7 @@ public class AddConnectionHandler implements ServerHandler<AddConnectionMsg> {
 		
 		Color color = new Color(red, green, blue);
 		PlayerModel p = new PlayerModel(100050, 100050, c.id, color);
-		ServerGame.players.add(p);
+		ServerGame.players.put(c.id, p);
 		
 		World.checkIfTilesInCache(p.getX(), p.getY());
 		
