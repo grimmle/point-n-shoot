@@ -25,13 +25,11 @@ public class Game extends Canvas implements Runnable {
 	
 	static Player player;
 	private World world;
-	
-	private Window w;
+
 	
 	public Game(long seed) {
-		w = new Window(WIDTH, HEIGHT, "Game - Client " + Client.id, this);
+		new Window(WIDTH, HEIGHT, "Game - Client " + Client.id, this);
 
-		
 		player = players.get(Client.id);
 		camera = new Camera(player.getX() - WIDTH/2, player.getY() - HEIGHT/2);
 		
@@ -56,7 +54,6 @@ public class Game extends Canvas implements Runnable {
 	public static void stop() {
 		isRunning = false;
 		Client.close();
-		System.out.println("Game stop");
 		try {
 			thread.join();
 		} catch(InterruptedException e) {

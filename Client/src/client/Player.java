@@ -16,7 +16,7 @@ public class Player extends GameObject {
 	private Color color;
 	private int size = 30;
 
-	private boolean up = false, down = false, right = false, left = false;
+	private static boolean up = false, down = false, right = false, left = false;
 	
 	public Agent agent;
 
@@ -46,7 +46,6 @@ public class Player extends GameObject {
 		else if(!right) velX = 0;
 		
 		if(tempX != velX || tempY != velY) {
-//			System.out.println("vel changed " + velX + " " + velY);
 			MovePlayerMsg move = new MovePlayerMsg();
 			move.velX = velX;
 			move.velY = velY;
@@ -66,11 +65,8 @@ public class Player extends GameObject {
 		}
 		g.setColor(x);
 		g.fillOval(offsetX, offsetY, size, size);
-//		g.setColor(Color.black);
-//		g.drawRect(offsetX, offsetY, size, size);
-		
+
 		if(agent != null) agent.render(g);
-		//g.fillPolygon(new int[] {x, x+15, x+30}, new int[] {y+30, y, y+30}, 3);
 	}
 
 	@Override
@@ -88,32 +84,32 @@ public class Player extends GameObject {
 		return up;
 	}
 
-	public void setUp(boolean up) {
-		this.up = up;
+	public static void setUp(boolean up) {
+		Player.up = up;
 	}
 
 	public boolean isDown() {
 		return down;
 	}
 
-	public void setDown(boolean down) {
-		this.down = down;
+	public static void setDown(boolean down) {
+		Player.down = down;
 	}
 
 	public boolean isRight() {
 		return right;
 	}
 
-	public void setRight(boolean right) {
-		this.right = right;
+	public static void setRight(boolean right) {
+		Player.right = right;
 	}
 
 	public boolean isLeft() {
 		return left;
 	}
 
-	public void setLeft(boolean left) {
-		this.left = left;
+	public static void setLeft(boolean left) {
+		Player.left = left;
 	}
 	
 	public void addBuff(float buff) {

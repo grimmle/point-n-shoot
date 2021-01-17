@@ -77,8 +77,8 @@ public class World {
 		if(Math.random() > 0.5) {
 			double rnd = Math.random();
 			String effect;
-			if(rnd < 0.15) effect = "agent";
-			else if(rnd > 0.85) effect = "health";
+			if(rnd < 0.3) effect = "agent";
+			else if(rnd > 0.80) effect = "health";
 			else effect = "buff";
 			
 			for(int i = 0; i < 5; i++) {
