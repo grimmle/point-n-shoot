@@ -1,10 +1,7 @@
 package common;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 
 public class Pickup extends GameObject {
 
@@ -16,8 +13,8 @@ public class Pickup extends GameObject {
 	public Pickup(int x, int y, String effect) {
 		super(x, y, TYPE.Pickup);
 		this.effect = effect;
-		if(effect == "agent") color = Color.ORANGE;
-		if(effect == "health") color = Color.GREEN;
+		if(effect == "agent") color = new Color(255, 91, 0);
+		if(effect == "health") color = new Color(19, 145, 20);
 	}
 
 	@Override

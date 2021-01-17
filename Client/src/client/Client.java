@@ -91,8 +91,6 @@ public class Client implements Runnable {
 			while (running) {
 				try {
 					Msg data = (Msg) in.readObject();
-//					System.out.println("> Client" + id + " received this: " + data);
-					if(data.getClass().getSimpleName().equals("AddConnectionMsg")) System.out.println("ADD " + ((AddConnectionMsg)data).players);
 					manager.received(data);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();

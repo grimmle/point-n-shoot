@@ -12,7 +12,6 @@ public class AddConnectionHandler implements Handler<AddConnectionMsg> {
 		
 		if(msg.players.size() != Game.players.size()) {
 			Game.players.clear();
-			System.out.println(msg.players);
 			for(PlayerModel player : msg.players) {
 				Game.players.add(new Player(player.getX(), player.getY(), player.id, player.getColor()));
 			}
@@ -20,7 +19,7 @@ public class AddConnectionHandler implements Handler<AddConnectionMsg> {
 		
 		if(Client.id == -1) {
 			Client.id = msg.id;
-			System.out.println("I got assigned the ID " + msg.id);
+//			System.out.println("I got assigned the ID " + msg.id);
 			new Game(msg.seed);
 		} else {
 			System.out.println("Player " + msg.id + " joined the Game!");

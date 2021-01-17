@@ -24,7 +24,7 @@ public class ServerGame implements Runnable {
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
 	public static ArrayList<PlayerModel> players = new ArrayList<PlayerModel>();
 	
-	public final static long SEED = 42069;
+	public final static long SEED = 1234;
 	World world;
 	
 	public boolean playersUpdated = false;
@@ -114,7 +114,7 @@ public class ServerGame implements Runnable {
 		        //CHECK COLLISION WITH WORLD BLOCKS
 				for(GameObject block : foundBlocks) {
 					if(p.getBounds().intersects(block.getBounds()) || block.getBounds().intersects(p.getBounds())) {
-						System.out.println("COLLISION!!!");
+//						System.out.println("COLLISION!!!");
 						p.setX((int) (p.getX() + (p.getVelX() * -1)));
 						p.setY((int) (p.getY() + (p.getVelY() * -1)));
 						break;
@@ -128,7 +128,7 @@ public class ServerGame implements Runnable {
 						dynamicObjects.addIfAbsent(tile.pickup);
 						dynamicsUpdated = true;
 						if(p.getBounds().intersects(tile.pickup.getBounds())) {
-							System.out.println("PICKUP");
+//							System.out.println("PICKUP");
 							hit = tile.pickup;
 							dynamicsUpdated = true;
 							
@@ -204,7 +204,7 @@ public class ServerGame implements Runnable {
 				//REMOVE BULLET IF IT HAS TRAVELED A MAX TIME
 				if((System.currentTimeMillis() - ((Bullet)obj).timestamp) > 3000) {
 					dynamicObjects.remove(obj);
-					System.out.println("REMOVED TIME");
+//					System.out.println("REMOVED TIME");
 				} else {
 					int newX = (int) (obj.getX() + obj.getVelX());
 					int newY = (int) (obj.getY() + obj.getVelY());
@@ -219,18 +219,17 @@ public class ServerGame implements Runnable {
 							WorldTile player = World.getTileAt(p.getX(), p.getY());
 							if(current.x == player.x && current.y == player.y) {
 								if(p.getBounds().intersects(obj.getBounds())) {
-									//int damage = (int) players.get(((Bullet)obj).id).getBuff() * 10;
 									int damage = ((Bullet) obj).getDamage();
 									p.setHealth(p.getHealth() - damage);
 									if(p.getHealth() <= 0) {
-										System.out.println("KILLED");
+//										System.out.println("KILLED");
 										p.setX(100050);
 										p.setY(100050);
 										p.setHealth(100);
 									}
 									playersUpdated = true;
 									dynamicObjects.remove(obj);
-									System.out.println("REMOVED HIT");
+//									System.out.println("REMOVED HIT");
 								}
 							}
 						}
@@ -243,7 +242,7 @@ public class ServerGame implements Runnable {
 					for(GameObject block : foundBlocks) {
 						if(obj.getBounds().intersects(block.getBounds())) {
 							dynamicObjects.remove(obj);
-							System.out.println("REMOVED");
+//							System.out.println("REMOVED");
 						}
 					}
 				}
@@ -268,8 +267,6 @@ public class ServerGame implements Runnable {
 					}
 					//send dynamic objects update
 					if(dynamicsUpdated) {
-//						System.out.println(dynamicObjects.size());
-//						System.out.println("DYNAMICS CHANGED");
 						DynamicObjectsUpdateMsg dyn = new DynamicObjectsUpdateMsg();
 						dyn.id = i;
 						dyn.content = dynamicObjects;

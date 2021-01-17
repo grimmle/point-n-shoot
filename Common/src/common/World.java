@@ -63,7 +63,7 @@ public class World {
 			float xoff = tileX + 0.0f;
 			for(int x = 0; x < BLOCKS_AMOUNT; x++) {
 				double out = Helper.map(OS.noise2(xoff, yoff), -1, 1, 0, 255);
-				tile.z[x][y] = out > 185 ? 255 : 0;
+				tile.z[x][y] = out > 175 ? 255 : 0;
 				if(tile.z[x][y] == 255) {
 					tile.obstacles.insert(new Block(tileX*TILE_SIZE + x*BLOCK_SIZE, tileY*TILE_SIZE + y*BLOCK_SIZE, BLOCK_SIZE));
 				}

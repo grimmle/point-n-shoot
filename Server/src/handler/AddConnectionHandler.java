@@ -35,7 +35,6 @@ public class AddConnectionHandler implements ServerHandler<AddConnectionMsg> {
 			if(connection.id == c.id) m.seed = ServerGame.SEED;
 			m.id = c.id;
 			m.players = ServerGame.players;
-			System.out.println(m.players.size() + " send to " + connection.id);
 			connection.sendObject(m);
 		});
 	}

@@ -112,7 +112,7 @@ public class Game extends Canvas implements Runnable {
 		
 		
 		//background
-		g.setColor(new Color(127, 127, 127));
+		g.setColor(new Color(196, 196, 177));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 				
 		//// DRAW STUFF
