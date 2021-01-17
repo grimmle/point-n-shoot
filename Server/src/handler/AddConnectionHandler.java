@@ -15,12 +15,12 @@ public class AddConnectionHandler implements ServerHandler<AddConnectionMsg> {
 		
 		float[] hsb =  new float[] { 0f, 1f, 0.5f };
 		hsb = Color.RGBtoHSB(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), hsb);
-//		hsb[1] = 1f;
-//		hsb[2] = 1f;
+		
 		int rgb = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
 		int red = (rgb>>16)&0xFF;
 		int green = (rgb>>8)&0xFF;
 		int blue = rgb&0xFF;
+		
 		Color color = new Color(red, green, blue);
 		PlayerModel p = new PlayerModel(100050, 100050, c.id, color);
 		ServerGame.players.add(p);

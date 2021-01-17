@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import common.*;
@@ -43,7 +42,6 @@ public class Connection implements Runnable {
 			while (running) {
 				try {
 					Msg data = (Msg) in.readObject();
-//					System.out.println("# " + id + " received " + data.getClass().getSimpleName());
 					manager.received(data, this);
 				} catch (EOFException e) {
 					System.out.println("# client quit: closing connection");
@@ -71,8 +69,6 @@ public class Connection implements Runnable {
 	}
 
 	public void sendObject(Msg message) {
-//		System.out.println("# send new msg: " + message);
-//		messageStack.add(message);
 		messages.offer(message);
 	}
 

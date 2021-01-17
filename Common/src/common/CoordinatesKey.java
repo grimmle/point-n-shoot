@@ -21,7 +21,7 @@ public class CoordinatesKey {
 
     @Override
     public int hashCode() {
-        int result = 17; // any prime number
+        int result = 17;
         result = 31 * result + Integer.valueOf(this.x).hashCode();
         result = 31 * result + Integer.valueOf(this.y).hashCode();
         return result;

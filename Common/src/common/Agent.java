@@ -120,13 +120,10 @@ public class Agent extends GameObject {
 		double d = desired.getLength();
 		double speed = MAX_SPEED;
 		
-		double steer_force = MAX_STEER_FORCE;
-		
 		if(d <= MIN_DISTANCE) {
 			speed = 0;
 		} else if(d < MAX_DISTANCE) {
 			speed = Helper.map(d, 0, MAX_DISTANCE, 0, MAX_SPEED);
-			steer_force = d;
 		}
 		desired.normalize();
 		desired.multiply(speed);
