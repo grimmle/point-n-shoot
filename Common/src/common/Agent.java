@@ -159,22 +159,11 @@ public class Agent extends GameObject {
 		rotated2 = rotateVectorBy(ahead, -25);
 		rotated3 = rotateVectorBy(ahead, 75);
 		rotated4 = rotateVectorBy(ahead, -75);
-<<<<<<< HEAD
-		rotated5 = rotateVectorBy(ahead, 40);
-		rotated6 = rotateVectorBy(ahead, -40);
-		rotated1.multiply(0.6);
-		rotated2.multiply(0.6);
-		rotated3.multiply(0.15);
-		rotated4.multiply(0.15);
-		rotated5.multiply(0.25);
-		rotated6.multiply(0.25);
-=======
-		
+
 		rotated1.multiply(0.5);
 		rotated2.multiply(0.5);
 		rotated3.multiply(0.2);
 		rotated4.multiply(0.2);
->>>>>>> parent of 5eb6315... even more tweaking
 		
 		ahead2 = ahead.getMultiplied(0.5);
 		ahead3 = ahead.getMultiplied(0.25);

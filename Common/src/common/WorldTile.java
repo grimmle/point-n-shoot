@@ -33,8 +33,8 @@ public class WorldTile {
     		b.render(g);
     	}
     	
-    	g.setColor(Color.white);
-    	g.drawRect(x*500, y*500, 500, 500);
+//    	g.setColor(Color.white);
+//    	g.drawRect(x*500, y*500, 500, 500);
     }
 
 
