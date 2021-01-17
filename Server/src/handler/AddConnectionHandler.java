@@ -14,7 +14,7 @@ public class AddConnectionHandler implements ServerHandler<AddConnectionMsg> {
 		Random rand = new Random();
 		
 		float[] hsb =  new float[] { 0f, 1f, 0.5f };
-		hsb = Color.RGBtoHSB(rand.nextInt(), rand.nextInt(), rand.nextInt(), hsb);
+		hsb = Color.RGBtoHSB(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), hsb);
 //		hsb[1] = 1f;
 //		hsb[2] = 1f;
 		int rgb = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);

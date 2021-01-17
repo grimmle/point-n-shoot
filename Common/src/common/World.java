@@ -1,6 +1,8 @@
 package common;
 
 import java.awt.Graphics;
+import java.util.Date;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import util.Helper;
@@ -12,29 +14,42 @@ public class World {
     
     private static OpenSimplex2F OS;
     
+    //true for client
+    private static boolean cleanCache = false;
+    static ConcurrentHashMap<CoordinatesKey, WorldTile> cache = new ConcurrentHashMap<CoordinatesKey, WorldTile>();
+    
+    
     public World(long seed) {
     	OS = new OpenSimplex2F(seed);
     }
+    
+    public World(long seed, boolean clean) {
+    	OS = new OpenSimplex2F(seed);
+    	cleanCache = clean;
+    }
 
-    //TODO: add actual cache functionality for clients
-    static ConcurrentHashMap<CoordinatesKey, WorldTile> cache = new ConcurrentHashMap<CoordinatesKey, WorldTile>();
-    static LRUCache lru = new LRUCache(9);
     
     public static void checkIfTilesInCache(int playerX, int playerY) {
         int tileX = playerX / TILE_SIZE;
         int tileY = playerY / TILE_SIZE;
         
-        if(cache.get(new CoordinatesKey(tileX-1, tileY-1)) == null) generateTile(tileX-1, tileY-1);
-        if(cache.get(new CoordinatesKey(tileX, tileY-1)) == null) generateTile(tileX, tileY-1);
-        if(cache.get(new CoordinatesKey(tileX+1, tileY-1)) == null) generateTile(tileX+1, tileY-1);
+        checkIfTileInCache(tileX-1, tileY-1);
+        checkIfTileInCache(tileX, tileY-1);
+        checkIfTileInCache(tileX+1, tileY-1);
         
-        if(cache.get(new CoordinatesKey(tileX-1, tileY)) == null) generateTile(tileX-1, tileY);
-        if(cache.get(new CoordinatesKey(tileX, tileY)) == null) generateTile(tileX, tileY); // players current tile
-        if(cache.get(new CoordinatesKey(tileX+1, tileY)) == null) generateTile(tileX+1, tileY);
+        checkIfTileInCache(tileX-1, tileY);
+        checkIfTileInCache(tileX, tileY); // players current tile
+        checkIfTileInCache(tileX+1, tileY);
         
-        if(cache.get(new CoordinatesKey(tileX-1, tileY+1)) == null) generateTile(tileX-1, tileY+1);
-        if(cache.get(new CoordinatesKey(tileX, tileY+1)) == null) generateTile(tileX, tileY+1);
-        if(cache.get(new CoordinatesKey(tileX+1, tileY+1)) == null) generateTile(tileX+1, tileY+1);
+        checkIfTileInCache(tileX-1, tileY+1);
+        checkIfTileInCache(tileX, tileY+1);
+        checkIfTileInCache(tileX+1, tileY+1);
+    }
+    
+    private static void checkIfTileInCache(int tileX, int tileY) {
+    	WorldTile tile = cache.get(new CoordinatesKey(tileX, tileY));
+    	if(tile == null) generateTile(tileX, tileY);
+        else updateLastUsed(tile);
     }
 
     
@@ -78,6 +93,21 @@ public class World {
 			}
 		}
 		cache.put(new CoordinatesKey(tileX, tileY), tile);
+		
+		//CLEAN CACHE
+		if(cleanCache) {
+	        if(cache.size() > 25) {
+	        	WorldTile oldest = tile;
+	        	CoordinatesKey key = null;
+	        	for (Entry<CoordinatesKey, WorldTile> entry : cache.entrySet()) {
+	        	    if(entry.getValue().lastUsed < oldest.lastUsed) {
+	        	    	oldest = entry.getValue();
+	        	    	key = entry.getKey();
+	        	    }
+	        	}
+	        	if(key != null) cache.remove(key);
+	        }
+        }
     }
     
     public void render(Graphics g) {
@@ -89,7 +119,13 @@ public class World {
     public static WorldTile getTileAt(int x, int y) {
     	int tileX = x / World.TILE_SIZE;
         int tileY = y / World.TILE_SIZE;
-    	return cache.get(new CoordinatesKey(tileX, tileY));
+        WorldTile tile = cache.get(new CoordinatesKey(tileX, tileY));
+        updateLastUsed(tile);
+    	return tile;
+    }
+    
+    private static void updateLastUsed(WorldTile tile) {
+    	tile.lastUsed = new Date().getTime();
     }
 
 	public static ConcurrentHashMap<CoordinatesKey, WorldTile> getCache() {

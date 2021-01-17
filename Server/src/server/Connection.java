@@ -65,6 +65,7 @@ public class Connection implements Runnable {
 				out.reset();
 			} catch (InterruptedException | IOException e) {
 				e.printStackTrace();
+				close();
 			}
 		}
 	}

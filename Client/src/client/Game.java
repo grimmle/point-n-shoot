@@ -39,7 +39,7 @@ public class Game extends Canvas implements Runnable {
 		this.addMouseListener(new MouseInput(camera));
 		
 		// WORLD	
-		world = new World(seed);
+		world = new World(seed, true);
 		World.checkIfTilesInCache(player.getX(), player.getY());
 
 		start();

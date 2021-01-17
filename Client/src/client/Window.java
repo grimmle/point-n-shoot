@@ -22,13 +22,12 @@ public class Window {
 			@Override
 		    public void windowClosing(WindowEvent e) {
 		        //window is being closed
-				System.out.println("CLOSING SHIT");
 				Client.close();
 		    }
 		    @Override
 		    public void windowClosed(WindowEvent e) {
 		        //window is closed
-		    	System.out.println("CLOSED DAT BIH");
+		    	Client.close();
 		    }
 			@Override
 			public void windowActivated(WindowEvent arg0) {
