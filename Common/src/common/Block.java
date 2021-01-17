@@ -9,6 +9,7 @@ public class Block extends GameObject {
 
 	private static final long serialVersionUID = -1660008728728386605L;
 	private int size = 32;
+	private Color color = new Color(28,17,66);
 
 	public Block(int x, int y) {
 		super(x, y, TYPE.Block);
@@ -25,7 +26,7 @@ public class Block extends GameObject {
 
 	@Override
 	public void render(Graphics g) {
-		g.setColor(Color.black);
+		g.setColor(color);
 		g.fillRect(x, y, size, size);
 		
 		//SHOW BOUNDING SHERE

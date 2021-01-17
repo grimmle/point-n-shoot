@@ -65,23 +65,8 @@ public class Connection implements Runnable {
 				out.reset();
 			} catch (InterruptedException | IOException e) {
 				e.printStackTrace();
+				close();
 			}
-			
-//			if(messageStack.size() > 0) {
-//				Msg message = messageStack.get(0);
-////				System.out.println("# handling msg " + message);
-//				try {
-//					if(message.getClass().getSimpleName().equals("AddConnectionMsg")) System.out.println("ADD "+ ((AddConnectionMsg)message).players);
-////					if(message.getClass().getSimpleName().equals("MovePlayerMsg")) System.out.println("MOVE " + ((MovePlayerMsg)message).players);
-////					out.writeObject(message);
-//					out.writeUnshared(message);
-//					out.reset();
-//					messageStack.remove(0);
-////					out.flush();
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//			}
 		}
 	}
 

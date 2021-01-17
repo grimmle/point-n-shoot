@@ -3,16 +3,13 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-import common.Block;
-import common.GameObject;
-import common.Pickup;
 import handler.AddConnectionHandler;
 import handler.DynamicObjectsUpdateHandler;
 import handler.GetStaticMapHandler;
 import handler.MovePlayerMsgHandler;
+import handler.RemoveConnectionHandler;
 
 
 public class Server implements Runnable {
@@ -36,11 +33,13 @@ public class Server implements Runnable {
 		GetStaticMapHandler map = new GetStaticMapHandler();
 		MovePlayerMsgHandler move = new MovePlayerMsgHandler();
 		DynamicObjectsUpdateHandler dyn = new DynamicObjectsUpdateHandler();
+		RemoveConnectionHandler rem = new RemoveConnectionHandler();
 		
 		MsgManager.register(add);
 		MsgManager.register(map);
 		MsgManager.register(move);
 		MsgManager.register(dyn);
+		MsgManager.register(rem);
 		
 		try {
 			serverSocket = new ServerSocket(port);

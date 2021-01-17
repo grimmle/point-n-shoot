@@ -18,11 +18,11 @@ public class Client implements Runnable {
 	private String host;
 	private int port;
 
-	private Socket socket;
+	private static Socket socket;
 	private static ObjectOutputStream out;
-	private ObjectInputStream in;
+	private static ObjectInputStream in;
 
-	private volatile boolean running = false;
+	private volatile static boolean running = false;
 	private MsgManager manager;
 	
 	public static int id = -1;
@@ -59,10 +59,11 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void close() {
+	public static void close() {
 		try {
 			running = false;
 			RemoveConnectionMsg msg = new RemoveConnectionMsg();
+			msg.id = id;
 			sendObject(msg);
 			in.close();
 			out.close();
@@ -90,8 +91,6 @@ public class Client implements Runnable {
 			while (running) {
 				try {
 					Msg data = (Msg) in.readObject();
-//					System.out.println("> Client" + id + " received this: " + data);
-					if(data.getClass().getSimpleName().equals("AddConnectionMsg")) System.out.println("ADD " + ((AddConnectionMsg)data).players);
 					manager.received(data);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();

@@ -21,7 +21,7 @@ public class Agent extends GameObject {
 	private final int MAX_DISTANCE = 350;
 	private final int MIN_DISTANCE = 30;
 	
-	private final int MAX_SEE_AHEAD = 220;
+	private final int MAX_SEE_AHEAD = 200;
 	private final double MAX_AVOID_FORCE = 2.5;
 	
 	private Vector2D target;
@@ -45,7 +45,7 @@ public class Agent extends GameObject {
 	
 	private transient List<Block> surroundings; 
 
-	private boolean showVectors = false;
+	private boolean showVectors = true;
 
 	public Agent(int x, int y, Color color) {
 		super(x, y, TYPE.Agent);
@@ -93,7 +93,7 @@ public class Agent extends GameObject {
 			g.drawLine((int)location.x, (int)location.y, (int)ahead3.x, (int)ahead3.y);
 			
 			//SHOW QT QUERY RANGE
-			g.drawRect((int)location.x-queryRange/2, (int)location.y-queryRange/2, queryRange, queryRange);
+			//g.drawRect((int)location.x-queryRange/2, (int)location.y-queryRange/2, queryRange, queryRange);
 			
 			//SHOW STEERING VECTOR
 	//		g.setColor(Color.magenta);
@@ -101,7 +101,7 @@ public class Agent extends GameObject {
 	//		System.out.println("STEER: " + s.x + " " + s.y);
 	//		g.drawLine((int)location.x, (int)location.y, (int)s.x, (int)s.y);
 			
-			//SHOW AVOIDANCE VECTOR
+			//SHOW AVOIDANCE VECTOR, MULITPLIED BY 100 FOR BETTER VISIBILITY
 			g.setColor(Color.orange);
 			Vector2D ax = avoid.getMultiplied(100);
 			Vector2D a = location.getAdded(ax);
@@ -135,31 +135,23 @@ public class Agent extends GameObject {
 		return steer;
 	}
 	
-//	public Vector2D seek(Vector2D target) {
-//		Vector2D desired = Vector2D.subtract(target, location);
-//		desired.normalize();
-//		desired.multiply(MAX_SPEED);
-//		
-//		Vector2D steer = Vector2D.subtract(desired, velocity);
-//		
-//		return steer;
-//	}
-	
 	public Vector2D avoid() {
 		Vector2D vel = velocity;
 		double dynamic_length = velocity.getLength();
 		if(dynamic_length != 0.0) {
 			vel = velocity.getNormalized();
-			ahead.multiply(dynamic_length);
+			ahead = vel.getMultiplied(MAX_SEE_AHEAD);
+			ahead.multiply(dynamic_length / (MAX_SPEED/2));
+		} else {			
+			ahead = vel.getMultiplied(MAX_SEE_AHEAD);
 		}
-		ahead = vel.getMultiplied(MAX_SEE_AHEAD);
 		
 		// COLLISION FEELERS
 		rotated1 = rotateVectorBy(ahead, 25);
 		rotated2 = rotateVectorBy(ahead, -25);
 		rotated3 = rotateVectorBy(ahead, 75);
 		rotated4 = rotateVectorBy(ahead, -75);
-		
+
 		rotated1.multiply(0.5);
 		rotated2.multiply(0.5);
 		rotated3.multiply(0.2);
@@ -173,7 +165,6 @@ public class Agent extends GameObject {
 		ahead2.add(location);
 		ahead3.add(location);
 		ahead4.add(location);
-		
 		rotated1.add(location);
 		rotated2.add(location);
 		rotated3.add(location);
@@ -185,7 +176,6 @@ public class Agent extends GameObject {
 	    double avoid_force = MAX_AVOID_FORCE;
 	    
 	    if (mostThreatening != null) {
-	    	//ahead2 maybe
 	        avoidance.x = ahead4.x - mostThreatening.getCenter().x;
 	        avoidance.y = ahead4.y - mostThreatening.getCenter().y;
 	        

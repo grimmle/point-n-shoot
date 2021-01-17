@@ -56,14 +56,15 @@ public class Player extends GameObject {
 	
 	@Override
 	public void render(Graphics g) {
-//		if(health < 50) {
-//			color = Color.gray;
-//		}
-		
 		int offsetX = x-(size/2);
 		int offsetY = y-(size/2);
 		
-		g.setColor(getColor());
+		Color x = color;
+		int h = (100 - health) / 20;
+		for(int i = 0; i < h; i++) {
+			x = x.darker();
+		}
+		g.setColor(x);
 		g.fillOval(offsetX, offsetY, size, size);
 //		g.setColor(Color.black);
 //		g.drawRect(offsetX, offsetY, size, size);
@@ -134,10 +135,6 @@ public class Player extends GameObject {
 	public void setHealth(int health) {
 		this.health = health;
 	}
-
-	public Color getColor() {
-		return color;
-	}
 	
 	public int getSize() {
 		return size;
@@ -153,6 +150,14 @@ public class Player extends GameObject {
 
 	public void setAgent(Agent agent) {
 		this.agent = agent;
+	}
+	
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color c) {
+		color = c;
 	}
 
 }
