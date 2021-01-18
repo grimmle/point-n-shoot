@@ -10,6 +10,7 @@ public class RemoveConnectionHandler implements ServerHandler<RemoveConnectionMs
 	@Override
 	public void handle(RemoveConnectionMsg msg, Connection c) {
 		System.out.println("Player " + c.id + " left");
+		Server.connections.get(c.id).ready = false;
 		Server.connections.get(c.id).close();
 		ServerGame.playersUpdated = true;
 	}

@@ -1,4 +1,5 @@
 package server;
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class ServerGame implements Runnable {
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
 	public static ConcurrentHashMap<Integer,PlayerModel> players = new ConcurrentHashMap<Integer,PlayerModel>();
 	
-	public final static long SEED = 42069;
+	public final static long SEED = 123456;
 	World world;
 	
 	public static boolean playersUpdated = false;

@@ -18,11 +18,11 @@ public class Agent extends GameObject {
 	private final double MAX_SPEED = 10;
 	private final double MAX_STEER_FORCE = 0.5;
 	
-	private final int MAX_DISTANCE = 350;
+	private final int MAX_DISTANCE = 330;
 	private final int MIN_DISTANCE = 30;
 	
 	private final int MAX_SEE_AHEAD = 220;
-	private final double MAX_AVOID_FORCE = 2.5;
+	private final double MAX_AVOID_FORCE = 2.2;
 	
 	private Vector2D target;
 	private Vector2D acceleration;

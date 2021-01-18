@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import common.*;
@@ -44,14 +45,18 @@ public class Connection implements Runnable {
 					Msg data = (Msg) in.readObject();
 					manager.received(data, this);
 				} catch (EOFException e) {
-					System.out.println("# client quit: closing connection");
 					close();
+					System.out.println("# client quit: closing connection");
 				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (SocketException e) {
+					close();
 					e.printStackTrace();
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			close();
 		}
 	}
 	
