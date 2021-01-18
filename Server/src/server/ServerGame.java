@@ -1,7 +1,10 @@
 package server;
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import common.Agent;
@@ -22,13 +25,13 @@ public class ServerGame implements Runnable {
 	private Thread thread;
 	
 	public static CopyOnWriteArrayList<GameObject> dynamicObjects = new CopyOnWriteArrayList<GameObject>();
-	public static ArrayList<PlayerModel> players = new ArrayList<PlayerModel>();
+	public static ConcurrentHashMap<Integer,PlayerModel> players = new ConcurrentHashMap<Integer,PlayerModel>();
 	
-	public final static long SEED = 42069;
+	public final static long SEED = 123456;
 	World world;
 	
-	public boolean playersUpdated = false;
-	public boolean dynamicsUpdated = false;
+	public static boolean playersUpdated = false;
+	public static boolean dynamicsUpdated = false;
 
 	void start() {
 		initGame();
@@ -87,7 +90,8 @@ public class ServerGame implements Runnable {
 	}
 	
 	public void checkPlayerCollision(long timer) {
-		for(PlayerModel p : players) {
+		for (Entry<Integer, PlayerModel> entry : players.entrySet()) {
+			PlayerModel p = entry.getValue();
 			if(p.getVelX() != 0 || p.getVelY() != 0) {
 				int newX = (int) (p.getX() + p.getVelX());
 				int newY = (int) (p.getY() + p.getVelY());
@@ -177,7 +181,8 @@ public class ServerGame implements Runnable {
 			playersUpdated = true;
 			
 			int [] closestPlayer = {-1, Integer.MAX_VALUE};
-			for(PlayerModel enemy : players) {
+			for (Entry<Integer, PlayerModel> entry : players.entrySet()) {
+				PlayerModel enemy = entry.getValue();
 				if(p.id == enemy.id) continue;
 				
 				Vector2D vec = Vector2D.subtract(p.getLocation(), enemy.getLocation());
@@ -214,7 +219,8 @@ public class ServerGame implements Runnable {
 					obj.setY(newY);
 					
 					//CHECK COLLISION WITH PLAYERS
-					for(PlayerModel p : players) {
+					for (Entry<Integer, PlayerModel> entry : players.entrySet()) {
+						PlayerModel p = entry.getValue();
 						if(((Bullet) obj).id != p.id) {
 							WorldTile player = World.getTileAt(p.getX(), p.getY());
 							if(current.x == player.x && current.y == player.y) {
@@ -226,6 +232,8 @@ public class ServerGame implements Runnable {
 										p.setX(100050);
 										p.setY(100050);
 										p.setHealth(100);
+										p.setAgent(null);
+										p.setBuff(1);
 									}
 									playersUpdated = true;
 									dynamicObjects.remove(obj);
@@ -254,21 +262,20 @@ public class ServerGame implements Runnable {
 	
 	public void sendUpdate() {
 		if(players.size() > 0) {
-			
 			Server.connections.forEach((i, connection) -> {
 				if(connection.ready) {
 					//send player updates
-					if(players.get(i) == null) System.out.println(i + "# player not found");
+					if(players.get(connection.id) == null) System.out.println("Player " + connection.id + " not found!");
 					else if(playersUpdated) {
 						MovePlayerMsg move = new MovePlayerMsg();
-						move.id = i;
+						move.id = connection.id;
 						move.players = ServerGame.players;
 						connection.sendObject(move);
 					}
 					//send dynamic objects update
 					if(dynamicsUpdated) {
 						DynamicObjectsUpdateMsg dyn = new DynamicObjectsUpdateMsg();
-						dyn.id = i;
+						dyn.id = connection.id;
 						dyn.content = dynamicObjects;
 						connection.sendObject(dyn);
 					}

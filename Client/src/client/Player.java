@@ -155,5 +155,9 @@ public class Player extends GameObject {
 	public void setColor(Color c) {
 		color = c;
 	}
+	
+	public void setBuff(int b) {
+		this.buffed = b;
+	}
 
 }

@@ -112,4 +112,8 @@ public class PlayerModel extends GameObject {
 		color = c;
 	}
 
+	public void setBuff(int b) {
+		this.buffed = b;
+	}
+
 }
